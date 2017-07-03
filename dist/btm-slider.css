@@ -1,13 +1,15 @@
-.btm-slider {
+.js-slider {
   display: block;
+  overflow: hidden;
   position: relative;
-  transition: margin-left .5s ease-in-out; }
-  .btm-slider__slider {
+  width: 100%; }
+  .js-slider__slider {
     display: table;
+    transition: margin-left .5s ease-in-out;
     width: 500%; }
-  .btm-slider__slide {
+  .js-slider__slide {
     display: table-cell; }
-  .btm-slider__prev-slide {
+  .js-slider__prev-slide {
     background-color: #ffffff;
     bottom: 0;
     cursor: pointer;
@@ -16,7 +18,7 @@
     left: 0;
     position: absolute;
     width: 20px; }
-  .btm-slider__next-slide {
+  .js-slider__next-slide {
     background-color: #ffffff;
     bottom: 0;
     cursor: pointer;
