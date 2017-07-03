@@ -1,0 +1,38 @@
+@import './variables';
+
+.btm-slider {
+    display: block;
+    position: relative;
+    transition: margin-left .5s ease-in-out;
+
+    &__slider {
+        display: table;
+        width: 500%;
+    }
+
+    &__slide {
+        display: table-cell;
+    }
+
+    &__prev-slide {
+        background-color: $white;
+        bottom: 0;
+        cursor: pointer;
+        display: block;
+        height: 20px;
+        left: 0;
+        position: absolute;
+        width: 20px;
+    }
+
+    &__next-slide {
+        background-color: $white;
+        bottom: 0;
+        cursor: pointer;
+        display: block;
+        height: 20px;
+        position: absolute;
+        right: 0;
+        width: 20px;
+    }
+}
