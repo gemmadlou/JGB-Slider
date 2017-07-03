@@ -1,9 +1,10 @@
 var path = require('path');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const WriteFilePlugin = require('write-file-webpack-plugin');
+const env = require('yargs').argv.env;
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
 const scriptConfig = {
-    devtool: 'source-map',
     plugins: [
         new WriteFilePlugin()
     ],
@@ -24,7 +25,6 @@ const scriptConfig = {
 };
 
 const styleConfig = {
-    devtool: 'source-map',
     plugins: [
         new WriteFilePlugin()
     ],
@@ -36,7 +36,7 @@ const styleConfig = {
                       fallback: 'style-loader',
                       //resolve-url-loader may be chained before sass-loader if necessary
                       use: ['css-loader', 'sass-loader']
-                    })
+                  })
              }
         ]
     }
@@ -45,25 +45,31 @@ const styleConfig = {
 var script = Object.assign(scriptConfig, {
     entry: './src/js/index.js',
     output: {
-        filename: 'btm-slider.js',
+        filename: (env === 'production') ? 'btm-slider.min.js' : 'btm-slider.js',
         path: path.resolve(__dirname, 'dist/'),
         publicPath: '/dist'
     }
 });
 
+if (env === 'production') {
+    script.plugins.push(new UglifyJSPlugin({ sourceMap: true, minimize: true }));
+}
+
 var style = Object.assign(styleConfig, {
     entry: {
-        'btm-slider': './src/scss/btm-slider.scss',
-        example: './src/scss/example.scss'
+        'btm-slider': './src/scss/btm-slider.scss'
     },
     output: {
-        filename: '[name].css',
+        filename: (env === 'production') ? '[name].min.css' : '[name].css',
         path: path.resolve(__dirname, 'dist/'),
         publicPath: '/dist'
     }
 });
 style.plugins.push(new ExtractTextPlugin({
-    filename: '[name].css'
+    filename: (env === 'production') ? '[name].min.css' : '[name].css'
 }));
+if (env !== 'production') {
+    style.entry.example = './src/scss/example.scss';
+}
 
 module.exports = [script, style]
