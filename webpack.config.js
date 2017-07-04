@@ -16,7 +16,7 @@ const scriptConfig = {
                  use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['env']
+                        presets: ["env", "stage-2"]
                     }
                  }
              }
@@ -47,17 +47,29 @@ var script = Object.assign(scriptConfig, {
     output: {
         filename: (env === 'production') ? 'btm-slider.min.js' : 'btm-slider.js',
         path: path.resolve(__dirname, 'dist/'),
-        publicPath: '/dist'
+        publicPath: '/dist',
+        library: 'BTMSlider',
+        libraryTarget: 'umd'
     }
 });
 
 if (env === 'production') {
-    script.plugins.push(new UglifyJSPlugin({ sourceMap: true, minimize: true }));
+    script.plugins.push(
+        new UglifyJSPlugin(
+            {
+                sourceMap: true,
+                minimize: true,
+                mangle: {
+                    except: ['_', 'exports', 'require']
+                }
+            }
+        )
+    );
 }
 
 var style = Object.assign(styleConfig, {
     entry: {
-        'btm-slider': './src/scss/btm-slider.scss'
+        'btm-slider': './src/scss/js-slider.scss'
     },
     output: {
         filename: (env === 'production') ? '[name].min.css' : '[name].css',

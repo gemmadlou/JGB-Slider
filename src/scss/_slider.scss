@@ -1,6 +1,4 @@
-@import './variables';
-
-.js-slider {
+@mixin slider ($buttonColor: #ffffff) {
     display: block;
     overflow: hidden;
     position: relative;
@@ -8,7 +6,7 @@
 
     &__slider {
         display: table;
-        transition: margin-left .5s ease-in-out;
+        transition: margin-left .8s ease-in-out;
         width: 500%;
     }
 
@@ -17,7 +15,7 @@
     }
 
     &__prev-slide {
-        background-color: $white;
+        background-color: $buttonColor;
         bottom: 0;
         cursor: pointer;
         display: block;
@@ -28,7 +26,7 @@
     }
 
     &__next-slide {
-        background-color: $white;
+        background-color: $buttonColor;
         bottom: 0;
         cursor: pointer;
         display: block;

@@ -5,7 +5,7 @@
   width: 100%; }
   .js-slider__slider {
     display: table;
-    transition: margin-left .5s ease-in-out;
+    transition: margin-left .8s ease-in-out;
     width: 500%; }
   .js-slider__slide {
     display: table-cell; }
