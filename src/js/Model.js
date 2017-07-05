@@ -1,3 +1,12 @@
+/**
+ * This manages all the state for the slider. The view depends on this completely.
+ *
+ * @example Example usage
+ *          import Slider, {isFirstSlide, isLastSlide} from './Slider.js';
+ *          let slider = new Model(5);
+ *          slider.action('next')
+ *          slider.action('previous')
+ */
 export default class {
     constructor(numberOfSlides) {
         this.state = {
@@ -6,12 +15,20 @@ export default class {
         }
     }
 
-    isLastSlide(state) {
-        return state.currentSlide === state.numberOfSlides;
-    }
+    handle = {
 
-    isFirstSlide(state) {
-        return state.currentSlide === 1;
+        next: (state) => {
+            let nextSlideNumber = isLastSlide(state) ? 1 : state.currentSlide + 1;
+            state.currentSlide = nextSlideNumber;
+            return state;
+        },
+
+        previous: (state) => {
+            let previousSlideNumber = isFirstSlide(state) ? state.numberOfSlides : state.currentSlide - 1;
+            state.currentSlide = previousSlideNumber;
+            return state;
+        }
+
     }
 
     getSliderPosition() {
@@ -34,20 +51,12 @@ export default class {
             console.log(e);
         }
     }
+}
 
-    handle = {
+export function isLastSlide(state) {
+    return state.currentSlide === state.numberOfSlides;
+}
 
-        next: (state) => {
-            let nextSlideNumber = this.isLastSlide(state) ? 1 : state.currentSlide + 1;
-            state.currentSlide = nextSlideNumber;
-            return state;
-        },
-
-        previous: (state) => {
-            let previousSlideNumber = this.isFirstSlide(state) ? state.numberOfSlides : state.currentSlide - 1;
-            state.currentSlide = previousSlideNumber;
-            return state;
-        }
-
-    }
+export function isFirstSlide(state) {
+    return state.currentSlide === 1;
 }

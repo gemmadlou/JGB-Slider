@@ -9240,24 +9240,34 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+exports.isLastSlide = isLastSlide;
+exports.isFirstSlide = isFirstSlide;
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+/**
+ * This manages all the state for the slider. The view depends on this completely.
+ *
+ * @example Example usage
+ *          import Slider, {isFirstSlide, isLastSlide} from './Slider.js';
+ *          let slider = new Model(5);
+ *          slider.action('next')
+ *          slider.action('previous')
+ */
 var _class = function () {
     function _class(numberOfSlides) {
-        var _this = this;
-
         _classCallCheck(this, _class);
 
         this.handle = {
 
             next: function next(state) {
-                var nextSlideNumber = _this.isLastSlide(state) ? 1 : state.currentSlide + 1;
+                var nextSlideNumber = isLastSlide(state) ? 1 : state.currentSlide + 1;
                 state.currentSlide = nextSlideNumber;
                 return state;
             },
 
             previous: function previous(state) {
-                var previousSlideNumber = _this.isFirstSlide(state) ? state.numberOfSlides : state.currentSlide - 1;
+                var previousSlideNumber = isFirstSlide(state) ? state.numberOfSlides : state.currentSlide - 1;
                 state.currentSlide = previousSlideNumber;
                 return state;
             }
@@ -9271,16 +9281,6 @@ var _class = function () {
     }
 
     _createClass(_class, [{
-        key: 'isLastSlide',
-        value: function isLastSlide(state) {
-            return state.currentSlide === state.numberOfSlides;
-        }
-    }, {
-        key: 'isFirstSlide',
-        value: function isFirstSlide(state) {
-            return state.currentSlide === 1;
-        }
-    }, {
         key: 'getSliderPosition',
         value: function getSliderPosition() {
             var percentage = (this.state.currentSlide - 1) * -100;
@@ -9310,6 +9310,13 @@ var _class = function () {
 }();
 
 exports.default = _class;
+function isLastSlide(state) {
+    return state.currentSlide === state.numberOfSlides;
+}
+
+function isFirstSlide(state) {
+    return state.currentSlide === 1;
+}
 
 /***/ }),
 /* 86 */
