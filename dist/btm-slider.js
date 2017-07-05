@@ -9334,29 +9334,29 @@ var _class = function () {
     }, {
         key: 'isLastSlide',
         value: function isLastSlide() {
-            return this.get('currentSlide') === this.get('numberOfSlides');
+            return this.data.currentSlide === this.data.numberOfSlides;
         }
     }, {
         key: 'isFirstSlide',
         value: function isFirstSlide() {
-            return this.get('currentSlide') === 1;
+            return this.data.currentSlide === 1;
         }
     }, {
         key: 'setPreviousSlide',
         value: function setPreviousSlide() {
-            var previousSlideNumber = this.isFirstSlide() ? this.get('numberOfSlides') : this.get('currentSlide') - 1;
-            this.set('currentSlide', previousSlideNumber);
+            var previousSlideNumber = this.isFirstSlide() ? this.data.numberOfSlides : this.data.currentSlide - 1;
+            this.data.currentSlide = previousSlideNumber;
         }
     }, {
         key: 'setNextSlide',
         value: function setNextSlide() {
-            var nextSlideNumber = this.isLastSlide() ? 1 : this.get('currentSlide') + 1;
-            this.set('currentSlide', nextSlideNumber);
+            var nextSlideNumber = this.isLastSlide() ? 1 : this.data.currentSlide + 1;
+            this.data.currentSlide = nextSlideNumber;
         }
     }, {
         key: 'getSliderPosition',
         value: function getSliderPosition() {
-            var percentage = (this.get('currentSlide') - 1) * -100;
+            var percentage = (this.data.currentSlide - 1) * -100;
             return percentage + '%';
         }
     }]);

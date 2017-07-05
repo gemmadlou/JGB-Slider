@@ -15,25 +15,25 @@ export default class {
     }
 
     isLastSlide() {
-        return (this.get('currentSlide') === this.get('numberOfSlides'));
+        return this.data.currentSlide === this.data.numberOfSlides;
     }
 
     isFirstSlide() {
-        return (this.get('currentSlide')) === 1;
+        return this.data.currentSlide === 1;
     }
 
     setPreviousSlide() {
-        let previousSlideNumber = this.isFirstSlide() ? this.get('numberOfSlides') : this.get('currentSlide') - 1;
-        this.set('currentSlide', previousSlideNumber);
+        let previousSlideNumber = this.isFirstSlide() ? this.data.numberOfSlides : this.data.currentSlide - 1;
+        this.data.currentSlide = previousSlideNumber;
     }
 
     setNextSlide() {
-        let nextSlideNumber = this.isLastSlide() ? 1 : this.get('currentSlide') + 1;
-        this.set('currentSlide', nextSlideNumber);
+        let nextSlideNumber = this.isLastSlide() ? 1 : this.data.currentSlide + 1;
+        this.data.currentSlide = nextSlideNumber;
     }
 
     getSliderPosition() {
-        let percentage = (this.get('currentSlide') - 1) * -100;
+        let percentage = (this.data.currentSlide - 1) * -100;
         return percentage + '%';
     }
 }
