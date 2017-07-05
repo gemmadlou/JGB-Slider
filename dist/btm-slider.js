@@ -9219,6 +9219,164 @@ function isUndefined(arg) {
 "use strict";
 
 
+var _Slider = __webpack_require__(87);
+
+var _Slider2 = _interopRequireDefault(_Slider);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+module.exports = _Slider2.default;
+
+/***/ }),
+/* 85 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _class = function () {
+    function _class(numberOfSlides) {
+        var _this = this;
+
+        _classCallCheck(this, _class);
+
+        this.handle = {
+
+            next: function next(state) {
+                var nextSlideNumber = _this.isLastSlide(state) ? 1 : state.currentSlide + 1;
+                state.currentSlide = nextSlideNumber;
+                return state;
+            },
+
+            previous: function previous(state) {
+                var previousSlideNumber = _this.isFirstSlide(state) ? state.numberOfSlides : state.currentSlide - 1;
+                state.currentSlide = previousSlideNumber;
+                return state;
+            }
+
+        };
+
+        this.state = {
+            currentSlide: 1,
+            numberOfSlides: numberOfSlides || 0
+        };
+    }
+
+    _createClass(_class, [{
+        key: 'isLastSlide',
+        value: function isLastSlide(state) {
+            return state.currentSlide === state.numberOfSlides;
+        }
+    }, {
+        key: 'isFirstSlide',
+        value: function isFirstSlide(state) {
+            return state.currentSlide === 1;
+        }
+    }, {
+        key: 'getSliderPosition',
+        value: function getSliderPosition() {
+            var percentage = (this.state.currentSlide - 1) * -100;
+            return percentage + '%';
+        }
+    }, {
+        key: 'getState',
+        value: function getState() {
+            return Object.assign({}, this.state);
+        }
+    }, {
+        key: 'action',
+        value: function action(_action, data) {
+            if (typeof this.handle[_action] !== 'function') {
+                return;
+            }
+
+            try {
+                this.state = this.handle[_action](this.getState(), data);
+            } catch (e) {
+                console.log(e);
+            }
+        }
+    }]);
+
+    return _class;
+}();
+
+exports.default = _class;
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _class = function () {
+    function _class(el, blockname) {
+        _classCallCheck(this, _class);
+
+        this.el = el;
+        blockname = blockname;
+
+        if (!this.isDomElement(this.el)) {
+            return;
+        }
+
+        this.slider = this.el.querySelector('.' + blockname + '__slider');
+        this.slides = this.el.querySelectorAll('.' + blockname + '__slide');
+        this.next = this.el.querySelector('.' + blockname + '__next-slide');
+        this.prev = this.el.querySelector('.' + blockname + '__prev-slide');
+    }
+
+    _createClass(_class, [{
+        key: 'isValid',
+        value: function isValid() {
+            return this.el !== undefined && this.slider !== undefined && this.slides !== undefined;
+        }
+    }, {
+        key: 'isDomElement',
+        value: function isDomElement(element) {
+            return element instanceof Element;
+        }
+    }, {
+        key: 'canClickPreviousButton',
+        value: function canClickPreviousButton() {
+            return this.prev !== 'undefined';
+        }
+    }, {
+        key: 'canClickNextButton',
+        value: function canClickNextButton() {
+            return this.next !== 'undefined';
+        }
+    }]);
+
+    return _class;
+}();
+
+exports.default = _class;
+
+/***/ }),
+/* 87 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _Model = __webpack_require__(85);
@@ -9257,34 +9415,38 @@ module.exports = function () {
                 return;
             }
 
-            this.model = new _Model2.default(this.view.dom.slides.length);
+            this.model = new _Model2.default(this.view.slides.length);
 
-            this.previousSlideHandler();
-            this.nextSlideHandler();
+            this.eventHandlers();
         }
     }, {
-        key: 'previousSlideHandler',
-        value: function previousSlideHandler() {
+        key: 'eventHandlers',
+        value: function eventHandlers() {
             var _this = this;
 
             if (this.view.canClickPreviousButton()) {
-                this.view.dom.prev.addEventListener('click', function () {
-                    _this.model.setPreviousSlide();
-                    _this.view.dom.slider.style['margin-left'] = _this.model.getSliderPosition();
+                this.view.prev.addEventListener('click', function () {
+                    _this.previous();
+                });
+            }
+
+            if (this.view.canClickNextButton()) {
+                this.view.next.addEventListener('click', function () {
+                    _this.next();
                 });
             }
         }
     }, {
-        key: 'nextSlideHandler',
-        value: function nextSlideHandler() {
-            var _this2 = this;
-
-            if (this.view.canClickNextButton()) {
-                this.view.dom.next.addEventListener('click', function () {
-                    _this2.model.setNextSlide();
-                    _this2.view.dom.slider.style['margin-left'] = _this2.model.getSliderPosition();
-                });
-            }
+        key: 'next',
+        value: function next() {
+            this.model.action('next');
+            this.view.slider.style['margin-left'] = this.model.getSliderPosition();
+        }
+    }, {
+        key: 'previous',
+        value: function previous() {
+            this.model.action('previous');
+            this.view.slider.style['margin-left'] = this.model.getSliderPosition();
         }
     }, {
         key: 'log',
@@ -9295,136 +9457,6 @@ module.exports = function () {
 
     return _class;
 }();
-
-/***/ }),
-/* 85 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var _class = function () {
-    function _class(numberOfSlides) {
-        _classCallCheck(this, _class);
-
-        this.data = {
-            currentSlide: 1,
-            numberOfSlides: numberOfSlides || 0
-        };
-    }
-
-    _createClass(_class, [{
-        key: 'get',
-        value: function get(getter) {
-            return this.data[getter];
-        }
-    }, {
-        key: 'set',
-        value: function set(setter, value) {
-            this.data[setter] = value;
-        }
-    }, {
-        key: 'isLastSlide',
-        value: function isLastSlide() {
-            return this.data.currentSlide === this.data.numberOfSlides;
-        }
-    }, {
-        key: 'isFirstSlide',
-        value: function isFirstSlide() {
-            return this.data.currentSlide === 1;
-        }
-    }, {
-        key: 'setPreviousSlide',
-        value: function setPreviousSlide() {
-            var previousSlideNumber = this.isFirstSlide() ? this.data.numberOfSlides : this.data.currentSlide - 1;
-            this.data.currentSlide = previousSlideNumber;
-        }
-    }, {
-        key: 'setNextSlide',
-        value: function setNextSlide() {
-            var nextSlideNumber = this.isLastSlide() ? 1 : this.data.currentSlide + 1;
-            this.data.currentSlide = nextSlideNumber;
-        }
-    }, {
-        key: 'getSliderPosition',
-        value: function getSliderPosition() {
-            var percentage = (this.data.currentSlide - 1) * -100;
-            return percentage + '%';
-        }
-    }]);
-
-    return _class;
-}();
-
-exports.default = _class;
-
-/***/ }),
-/* 86 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var _class = function () {
-    function _class(el, blockname) {
-        _classCallCheck(this, _class);
-
-        this.dom = {};
-        this.dom.el = el;
-        this.blockname = blockname;
-
-        if (!this.isDomElement(this.dom.el)) {
-            return;
-        }
-
-        this.dom.slider = this.dom.el.querySelector('.' + this.blockname + '__slider');
-        this.dom.slides = this.dom.el.querySelectorAll('.' + this.blockname + '__slide');
-        this.dom.next = this.dom.el.querySelector('.' + this.blockname + '__next-slide');
-        this.dom.prev = this.dom.el.querySelector('.' + this.blockname + '__prev-slide');
-    }
-
-    _createClass(_class, [{
-        key: 'isValid',
-        value: function isValid() {
-            return this.dom.el !== undefined && this.dom.slider !== undefined && this.dom.slides !== undefined;
-        }
-    }, {
-        key: 'isDomElement',
-        value: function isDomElement(element) {
-            return element instanceof Element;
-        }
-    }, {
-        key: 'canClickPreviousButton',
-        value: function canClickPreviousButton() {
-            return this.dom.prev !== 'undefined';
-        }
-    }, {
-        key: 'canClickNextButton',
-        value: function canClickNextButton() {
-            return this.dom.next !== 'undefined';
-        }
-    }]);
-
-    return _class;
-}();
-
-exports.default = _class;
 
 /***/ })
 /******/ ]);

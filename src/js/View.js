@@ -1,23 +1,22 @@
 export default class {
     constructor(el, blockname) {
-        this.dom = {};
-        this.dom.el = el;
-        this.blockname = blockname;
+        this.el = el;
+        blockname = blockname;
 
-        if (!this.isDomElement(this.dom.el)) {
+        if (!this.isDomElement(this.el)) {
             return;
         }
 
-        this.dom.slider = this.dom.el.querySelector('.' + this.blockname + '__slider');
-        this.dom.slides = this.dom.el.querySelectorAll('.' + this.blockname + '__slide');
-        this.dom.next = this.dom.el.querySelector('.' + this.blockname + '__next-slide');
-        this.dom.prev = this.dom.el.querySelector('.' + this.blockname + '__prev-slide');
+        this.slider = this.el.querySelector('.' + blockname + '__slider');
+        this.slides = this.el.querySelectorAll('.' + blockname + '__slide');
+        this.next = this.el.querySelector('.' + blockname + '__next-slide');
+        this.prev = this.el.querySelector('.' + blockname + '__prev-slide');
     }
 
     isValid() {
-        return (this.dom.el !== undefined) &&
-                (this.dom.slider !== undefined) &&
-                (this.dom.slides !== undefined);
+        return (this.el !== undefined) &&
+                (this.slider !== undefined) &&
+                (this.slides !== undefined);
     }
 
     isDomElement(element) {
@@ -25,10 +24,10 @@ export default class {
     }
 
     canClickPreviousButton() {
-        return this.dom.prev !== 'undefined';
+        return this.prev !== 'undefined';
     }
 
     canClickNextButton() {
-        return this.dom.next !== 'undefined';
+        return this.next !== 'undefined';
     }
 }

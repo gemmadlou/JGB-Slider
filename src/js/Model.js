@@ -1,39 +1,53 @@
 export default class {
     constructor(numberOfSlides) {
-        this.data = {
+        this.state = {
             currentSlide:  1,
             numberOfSlides: numberOfSlides || 0
         }
     }
 
-    get(getter) {
-        return this.data[getter];
+    isLastSlide(state) {
+        return state.currentSlide === state.numberOfSlides;
     }
 
-    set(setter, value) {
-        this.data[setter] = value;
-    }
-
-    isLastSlide() {
-        return this.data.currentSlide === this.data.numberOfSlides;
-    }
-
-    isFirstSlide() {
-        return this.data.currentSlide === 1;
-    }
-
-    setPreviousSlide() {
-        let previousSlideNumber = this.isFirstSlide() ? this.data.numberOfSlides : this.data.currentSlide - 1;
-        this.data.currentSlide = previousSlideNumber;
-    }
-
-    setNextSlide() {
-        let nextSlideNumber = this.isLastSlide() ? 1 : this.data.currentSlide + 1;
-        this.data.currentSlide = nextSlideNumber;
+    isFirstSlide(state) {
+        return state.currentSlide === 1;
     }
 
     getSliderPosition() {
-        let percentage = (this.data.currentSlide - 1) * -100;
+        let percentage = (this.state.currentSlide - 1) * -100;
         return percentage + '%';
+    }
+
+    getState() {
+        return Object.assign({}, this.state);
+    }
+
+    action(action, data) {
+        if (typeof this.handle[action] !== 'function') {
+            return;
+        }
+
+        try {
+            this.state = this.handle[action](this.getState(), data);
+        } catch (e) {
+            console.log(e);
+        }
+    }
+
+    handle = {
+
+        next: (state) => {
+            let nextSlideNumber = this.isLastSlide(state) ? 1 : state.currentSlide + 1;
+            state.currentSlide = nextSlideNumber;
+            return state;
+        },
+
+        previous: (state) => {
+            let previousSlideNumber = this.isFirstSlide(state) ? state.numberOfSlides : state.currentSlide - 1;
+            state.currentSlide = previousSlideNumber;
+            return state;
+        }
+
     }
 }

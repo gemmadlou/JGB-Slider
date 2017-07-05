@@ -7,11 +7,7 @@ module.exports = class {
 
         let defaults = {
             el,
-            blockname: 'js-slider',
-            slideDuration: 800,
-            beforeSlide: function() {},
-            afterSlide: function() {},
-            init: function() {}
+            blockname: 'js-slider'
         };
 
         this.settings = Object.assign({}, defaults, userSettings);
@@ -30,19 +26,12 @@ module.exports = class {
             return;
         }
 
-        this.model = new Model(
-            this.view.slides.length,
-            this.settings.slideDuration
-        );
+        this.model = new Model(this.view.slides.length);
 
-        this.view.slider.style.transitionDuration = this.model.data.slideDuration + 'ms';
-
-        this.handleEvents();
-
-        this.settings.init();
+        this.eventHandlers();
     }
 
-    handleEvents() {
+    eventHandlers() {
         if (this.view.canClickPreviousButton()) {
             this.view.prev.addEventListener('click', () => {
                 this.previous();
@@ -56,14 +45,14 @@ module.exports = class {
         }
     }
 
-    previous() {
-        this.model.setPreviousSlide();
-        this.view.updateSlidePosition(this.model.getSliderPosition());
+    next() {
+        this.model.action('next');
+        this.view.slider.style['margin-left'] = this.model.getSliderPosition();
     }
 
-    next() {
-        this.model.setNextSlide();
-        this.view.updateSlidePosition(this.model.getSliderPosition());
+    previous() {
+        this.model.action('previous');
+        this.view.slider.style['margin-left'] = this.model.getSliderPosition();
     }
 
     log(msg) {
