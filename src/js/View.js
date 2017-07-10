@@ -1,5 +1,5 @@
 export default class {
-    constructor(el, blockname) {
+    constructor(el, blockname, model) {
         this.el = el;
         blockname = blockname;
 

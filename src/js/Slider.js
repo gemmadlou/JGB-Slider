@@ -10,12 +10,20 @@ export default class {
             blockname: 'js-slider',
             slideDuration: 1200,
             autoplay: false,
+            autoplaySpeed: 5000,
+            autoplayState: 'stopped',
+            prevAutoplayState: 'init',
             beforeSlide: function() {},
             afterSlide: function() {},
-            onInit: function() {}
+            onInit: function() {},
+            onStartAutoplay: function() {},
+            onStopAutoplay: function() {},
+            onPauseAutoplay: function() {}
         };
 
         this.settings = Object.assign({}, defaults, userSettings);
+
+        this.startAutoplayTimer;
 
         this.init();
     }
@@ -35,9 +43,38 @@ export default class {
 
         this.setUpView();
 
+        this.settings.onInit();
+
         this.eventHandlers();
 
-        this.settings.onInit();
+        this.autoplay();
+    }
+
+    autoplay() {
+        clearTimeout(this.startAutoplayTimer);
+
+        if (this.settings.autoplay) {
+
+            this.handle.onStartAutoplay();
+
+            this.startAutoplayTimer = setTimeout(() => {
+                this.next();
+                this.autoplay();
+            }, this.settings.autoplaySpeed);
+        }
+    }
+
+    startAutoplay() {
+        this.settings.autoplay = true;
+        this.autoplay();
+    }
+
+    pauseAutoplay() {
+        this.handle.onPauseAutoplay();
+    }
+
+    disableAutoplay() {
+        this.handle.onStopAutoplay();
     }
 
     setUpView() {
@@ -56,6 +93,14 @@ export default class {
                 this.next();
             });
         }
+
+        this.view.el.addEventListener('mouseenter', () => {
+            this.pauseAutoplay();
+        });
+
+        this.view.el.addEventListener('mouseleave', () => {
+            this.autoplay();
+        });
     }
 
     updateSliderPosition() {
@@ -64,6 +109,51 @@ export default class {
         var timer = setTimeout(() => {
             this.settings.afterSlide();
         }, this.settings.slideDuration);
+    }
+
+    setNewAutoplayState(state) {
+        this.settings.prevAutoplayState = this.settings.autoplayState;
+        this.settings.autoplayState = state;
+    }
+
+    handle = {
+        onStartAutoplay: () => {
+            clearTimeout(this.startAutoplayTimer);
+
+            if (this.settings.autoplayState === 'paused') {
+                return;
+            }
+
+            this.setNewAutoplayState('started');
+
+            if (this.settings.autoplayState === 'started' &&
+                this.settings.prevAutoplayState !== 'started') {
+                this.settings.onStartAutoplay();
+            }
+        },
+        onPauseAutoplay: () => {
+            clearTimeout(this.startAutoplayTimer);
+
+            if (this.settings.autoplayState === 'stopped') {
+                return;
+            }
+
+            this.setNewAutoplayState('paused');
+
+            if (this.settings.autoplayState === 'paused') {
+                this.settings.onPauseAutoplay();
+            }
+        },
+        onStopAutoplay: () => {
+            clearTimeout(this.startAutoplayTimer);
+
+            this.setNewAutoplayState('stopped');
+            this.settings.autoplay = false;
+
+            if (this.settings.autoplayState === 'stopped' && this.settings.prevAutoplayState !== 'stopped') {
+                this.settings.onStopAutoplay();
+            }
+        }
     }
 
     next() {

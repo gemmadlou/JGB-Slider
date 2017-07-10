@@ -12,5 +12,24 @@ img {
 }
 
 .example-slider {
-    @include slider(#ffffff);    
+    @include slider(#ffffff);
+
+    &__next-slide {
+        border-radius: 50%;
+        right: 2em;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    &__prev-slide {
+        border-radius: 50%;
+        left: 2em;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+}
+
+button {
+    font-size: 1.5em;
+    padding: .5em 1em;
 }

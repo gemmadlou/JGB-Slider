@@ -35,3 +35,17 @@ img {
     position: absolute;
     right: 0;
     width: 20px; }
+  .example-slider__next-slide {
+    border-radius: 50%;
+    right: 2em;
+    top: 50%;
+    transform: translateY(-50%); }
+  .example-slider__prev-slide {
+    border-radius: 50%;
+    left: 2em;
+    top: 50%;
+    transform: translateY(-50%); }
+
+button {
+  font-size: 1.5em;
+  padding: .5em 1em; }

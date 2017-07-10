@@ -6,39 +6,74 @@
     <link href="../dist/btm-slider.css" rel="stylesheet" />
   </head>
   <body>
-      <div class="js-slider">
-          <span class="js-slider__prev-slide"></span>
-          <span class="js-slider__next-slide"></span>
-          <ol class="js-slider__slider">
-              <li class="js-slider__slide">
+      <div class="example-slider">
+          <span class="example-slider__prev-slide"></span>
+          <span class="example-slider__next-slide"></span>
+          <ol class="example-slider__slider">
+              <li class="example-slider__slide">
                   <img src="http://unsplash.it/1200/500" />
               </li>
-              <li class="js-slider__slide">
+              <li class="example-slider__slide">
                   <img src="http://unsplash.it/1200/500?image=123" />
               </li>
-              <li class="js-slider__slide">
+              <li class="example-slider__slide">
                   <img src="http://unsplash.it/1200/500?image=173" />
               </li>
-              <li class="js-slider__slide">
+              <li class="example-slider__slide">
                   <img src="http://unsplash.it/1200/500?image=143" />
               </li>
-              <li class="js-slider__slide">
+              <li class="example-slider__slide">
                   <img src="http://unsplash.it/1200/500?image=423" />
               </li>
           </ol>
       </div>
-      <ul id="events">
-        <li>slideDuration: 300</li>
+      <div>
+          <button id="stop">Stop Autoplay</button>
+          <button id="start">Start Autoplay</button>
+      </div>
+      <ul>
+          <li>slideDuration: 450</li>
+          <li>autoplay: true</li>
+          <li>autoplaySpeed: 2500</li>
       </ul>
+      <hr/>
+      <ul id="events"></ul>
       <script src="../dist/btm-slider.js"></script>
       <script>
           var events = document.getElementById('events');
           var el = new BTMSlider({
-              selector: '.js-slider',
-              slideDuration: 300,
-              autoplay: true
+              selector: '.example-slider',
+              slideDuration: 450,
+              autoplay: true,
+              autoplaySpeed: 2500,
+              onStartAutoplay: function() {
+                  events.innerHTML += '<li>Autoplay started</li>';
+              },
+              onPauseAutoplay: function() {
+                  events.innerHTML += '<li>Autoplay paused</li>';
+              },
+              onStopAutoplay: function() {
+                  events.innerHTML += '<li>Autoplay stopped</li>';
+              },
+              onInit: function() {
+                  events.innerHTML += '<li>Slider initialized</li>';
+              },
+              afterSlide: function() {
+                  events.innerHTML += '<li>After slide event</li>';
+              }
           });
 
+          console.log(el)
+
+          var stopButton = document.getElementById('stop');
+          stopButton.addEventListener('click', function() {
+             el.sliders[0].disableAutoplay();
+          });
+
+          var startButton = document.getElementById('start');
+          startButton.addEventListener('click', function() {
+             el.sliders[0].startAutoplay();
+          });
       </script>
   </body>
 </html>

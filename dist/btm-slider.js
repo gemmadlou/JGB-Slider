@@ -9283,19 +9283,69 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var _class = function () {
     function _class(userSettings) {
+        var _this = this;
+
         _classCallCheck(this, _class);
+
+        this.handle = {
+            onStartAutoplay: function onStartAutoplay() {
+                clearTimeout(_this.startAutoplayTimer);
+
+                if (_this.settings.autoplayState === 'paused') {
+                    return;
+                }
+
+                _this.setNewAutoplayState('started');
+
+                if (_this.settings.autoplayState === 'started' && _this.settings.prevAutoplayState !== 'started') {
+                    _this.settings.onStartAutoplay();
+                }
+            },
+            onPauseAutoplay: function onPauseAutoplay() {
+                clearTimeout(_this.startAutoplayTimer);
+
+                if (_this.settings.autoplayState === 'stopped') {
+                    return;
+                }
+
+                _this.setNewAutoplayState('paused');
+
+                if (_this.settings.autoplayState === 'paused') {
+                    _this.settings.onPauseAutoplay();
+                }
+            },
+            onStopAutoplay: function onStopAutoplay() {
+                clearTimeout(_this.startAutoplayTimer);
+
+                _this.setNewAutoplayState('stopped');
+                _this.settings.autoplay = false;
+
+                if (_this.settings.autoplayState === 'stopped' && _this.settings.prevAutoplayState !== 'stopped') {
+                    _this.settings.onStopAutoplay();
+                }
+            }
+        };
+
 
         var defaults = {
             el: el,
             blockname: 'js-slider',
             slideDuration: 1200,
             autoplay: false,
+            autoplaySpeed: 5000,
+            autoplayState: 'stopped',
+            prevAutoplayState: 'init',
             beforeSlide: function beforeSlide() {},
             afterSlide: function afterSlide() {},
-            onInit: function onInit() {}
+            onInit: function onInit() {},
+            onStartAutoplay: function onStartAutoplay() {},
+            onStopAutoplay: function onStopAutoplay() {},
+            onPauseAutoplay: function onPauseAutoplay() {}
         };
 
         this.settings = Object.assign({}, defaults, userSettings);
+
+        this.startAutoplayTimer;
 
         this.init();
     }
@@ -9314,9 +9364,44 @@ var _class = function () {
 
             this.setUpView();
 
+            this.settings.onInit();
+
             this.eventHandlers();
 
-            this.settings.onInit();
+            this.autoplay();
+        }
+    }, {
+        key: 'autoplay',
+        value: function autoplay() {
+            var _this2 = this;
+
+            clearTimeout(this.startAutoplayTimer);
+
+            if (this.settings.autoplay) {
+
+                this.handle.onStartAutoplay();
+
+                this.startAutoplayTimer = setTimeout(function () {
+                    _this2.next();
+                    _this2.autoplay();
+                }, this.settings.autoplaySpeed);
+            }
+        }
+    }, {
+        key: 'startAutoplay',
+        value: function startAutoplay() {
+            this.settings.autoplay = true;
+            this.autoplay();
+        }
+    }, {
+        key: 'pauseAutoplay',
+        value: function pauseAutoplay() {
+            this.handle.onPauseAutoplay();
+        }
+    }, {
+        key: 'disableAutoplay',
+        value: function disableAutoplay() {
+            this.handle.onStopAutoplay();
         }
     }, {
         key: 'setUpView',
@@ -9326,30 +9411,44 @@ var _class = function () {
     }, {
         key: 'eventHandlers',
         value: function eventHandlers() {
-            var _this = this;
+            var _this3 = this;
 
             if (this.view.canClickPreviousButton()) {
                 this.view.prev.addEventListener('click', function () {
-                    _this.previous();
+                    _this3.previous();
                 });
             }
 
             if (this.view.canClickNextButton()) {
                 this.view.next.addEventListener('click', function () {
-                    _this.next();
+                    _this3.next();
                 });
             }
+
+            this.view.el.addEventListener('mouseenter', function () {
+                _this3.pauseAutoplay();
+            });
+
+            this.view.el.addEventListener('mouseleave', function () {
+                _this3.autoplay();
+            });
         }
     }, {
         key: 'updateSliderPosition',
         value: function updateSliderPosition() {
-            var _this2 = this;
+            var _this4 = this;
 
             this.settings.beforeSlide();
             this.view.slider.style['margin-left'] = this.model.getSliderPosition();
             var timer = setTimeout(function () {
-                _this2.settings.afterSlide();
+                _this4.settings.afterSlide();
             }, this.settings.slideDuration);
+        }
+    }, {
+        key: 'setNewAutoplayState',
+        value: function setNewAutoplayState(state) {
+            this.settings.prevAutoplayState = this.settings.autoplayState;
+            this.settings.autoplayState = state;
         }
     }, {
         key: 'next',
@@ -9392,12 +9491,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /**
  * This manages all the state for the slider. The view depends on this completely.
- *
- * @example Example usage
- *          import Slider, {isFirstSlide, isLastSlide} from './Slider.js';
- *          let slider = new Model(5);
- *          slider.action('next')
- *          slider.action('previous')
  */
 var _class = function () {
     function _class(numberOfSlides) {
@@ -9410,13 +9503,18 @@ var _class = function () {
     }
 
     _createClass(_class, [{
+        key: 'setNumberOfSlides',
+        value: function setNumberOfSlides(numberOfSlides) {
+            this.state.numberOfSlides = numberOfSlides;
+        }
+    }, {
         key: 'isLastSlide',
-        value: function isLastSlide(state) {
+        value: function isLastSlide() {
             return this.state.currentSlide === this.state.numberOfSlides;
         }
     }, {
         key: 'isFirstSlide',
-        value: function isFirstSlide(state) {
+        value: function isFirstSlide() {
             return this.state.currentSlide === 1;
         }
     }, {
@@ -9460,7 +9558,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _class = function () {
-    function _class(el, blockname) {
+    function _class(el, blockname, model) {
         _classCallCheck(this, _class);
 
         this.el = el;

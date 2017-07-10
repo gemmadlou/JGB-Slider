@@ -28,45 +28,57 @@ Import the sass file
 ## Instantiation
 
 ```
-new BTMSlider({
-    el: document.querySelector('.js-slider')
+BTMSlider({
+    el: document.querySelector('.js-slider'),
+    slideDuration: 1000, // default set
+    autoplay: true, // default is false
 });
 ```
 
-### Custom bem element
+### The css follows BEM
 
-For this - you will need to either import the js-slider mixin into your own project
-or copy the distribution style and modify it to your needs.
-
-```
-new BTMSlider({
-    el: document.querySelector('.custom-block'),
-    blockname: '.custom-block'
-});
-```
+.block
+.block__slider
+.block__slide
+.block__prev-button
+.block__next-button
 
 
 ### Methods
 
-// Goes to the next slide
+##### Goes to the next slide
 instance.next();
 
-// Goes to the previous slide
+##### Goes to the previous slide
 instance.previous();
+
+##### Starts autoplay
+instance.startAutoplay();
+
+##### End autoplay
+instance.disableAutoplay();
+
+### Eventhandlers
+
+```
+onStartAutoplay
+
+onPauseAutoplay
+
+onStopAutoplay
+
+onInit
+
+beforeSlide
+
+afterSlide
+
+```
 
 ### Multiple sliders?
 
-I'll leave that fandangle to you.
-
-```
-var sliders = querySelectorAll('.slider');
-for (var slider in sliders) {
-    new BTMSlider({
-        el: slider,
-        blockname: '.slider'
-    });
-}
-```
+You are returned an array of event handlers which are created when you initialise BTMSlider.
+Therefore, you can have multiple sliders on a page using the same class.
 
 ### Changing transition speed
 
