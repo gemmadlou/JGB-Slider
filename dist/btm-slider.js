@@ -9289,7 +9289,7 @@ var _class = function () {
 
         this.handle = {
             onStartAutoplay: function onStartAutoplay() {
-                clearTimeout(_this.startAutoplayTimer);
+                clearTimeout(_this.settings.startAutoplayTimer);
 
                 if (_this.settings.autoplayState === 'paused') {
                     return;
@@ -9302,7 +9302,7 @@ var _class = function () {
                 }
             },
             onPauseAutoplay: function onPauseAutoplay() {
-                clearTimeout(_this.startAutoplayTimer);
+                clearTimeout(_this.settings.startAutoplayTimer);
 
                 if (_this.settings.autoplayState === 'stopped') {
                     return;
@@ -9315,7 +9315,7 @@ var _class = function () {
                 }
             },
             onStopAutoplay: function onStopAutoplay() {
-                clearTimeout(_this.startAutoplayTimer);
+                clearTimeout(_this.settings.startAutoplayTimer);
 
                 _this.setNewAutoplayState('stopped');
                 _this.settings.autoplay = false;
@@ -9335,6 +9335,7 @@ var _class = function () {
             autoplaySpeed: 5000,
             autoplayState: 'stopped',
             prevAutoplayState: 'init',
+            startAutoplayTimer: null,
             beforeSlide: function beforeSlide() {},
             afterSlide: function afterSlide() {},
             onInit: function onInit() {},
@@ -9344,8 +9345,6 @@ var _class = function () {
         };
 
         this.settings = Object.assign({}, defaults, userSettings);
-
-        this.startAutoplayTimer;
 
         this.init();
     }
@@ -9375,13 +9374,13 @@ var _class = function () {
         value: function autoplay() {
             var _this2 = this;
 
-            clearTimeout(this.startAutoplayTimer);
+            clearTimeout(this.settings.startAutoplayTimer);
 
             if (this.settings.autoplay) {
 
                 this.handle.onStartAutoplay();
 
-                this.startAutoplayTimer = setTimeout(function () {
+                this.settings.startAutoplayTimer = setTimeout(function () {
                     _this2.next();
                     _this2.autoplay();
                 }, this.settings.autoplaySpeed);

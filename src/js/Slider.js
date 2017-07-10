@@ -13,6 +13,7 @@ export default class {
             autoplaySpeed: 5000,
             autoplayState: 'stopped',
             prevAutoplayState: 'init',
+            startAutoplayTimer: null,
             beforeSlide: function() {},
             afterSlide: function() {},
             onInit: function() {},
@@ -22,8 +23,6 @@ export default class {
         };
 
         this.settings = Object.assign({}, defaults, userSettings);
-
-        this.startAutoplayTimer;
 
         this.init();
     }
@@ -51,13 +50,13 @@ export default class {
     }
 
     autoplay() {
-        clearTimeout(this.startAutoplayTimer);
+        clearTimeout(this.settings.startAutoplayTimer);
 
         if (this.settings.autoplay) {
 
             this.handle.onStartAutoplay();
 
-            this.startAutoplayTimer = setTimeout(() => {
+            this.settings.startAutoplayTimer = setTimeout(() => {
                 this.next();
                 this.autoplay();
             }, this.settings.autoplaySpeed);
@@ -118,7 +117,7 @@ export default class {
 
     handle = {
         onStartAutoplay: () => {
-            clearTimeout(this.startAutoplayTimer);
+            clearTimeout(this.settings.startAutoplayTimer);
 
             if (this.settings.autoplayState === 'paused') {
                 return;
@@ -132,7 +131,7 @@ export default class {
             }
         },
         onPauseAutoplay: () => {
-            clearTimeout(this.startAutoplayTimer);
+            clearTimeout(this.settings.startAutoplayTimer);
 
             if (this.settings.autoplayState === 'stopped') {
                 return;
@@ -145,7 +144,7 @@ export default class {
             }
         },
         onStopAutoplay: () => {
-            clearTimeout(this.startAutoplayTimer);
+            clearTimeout(this.settings.startAutoplayTimer);
 
             this.setNewAutoplayState('stopped');
             this.settings.autoplay = false;
