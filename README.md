@@ -59,7 +59,7 @@ or
 
 ```
 var sliders = new BTMSlider({
-    el: document.querySelector('.example-slider'), // Default is .js-slider
+    el: document.querySelector('.example-slider'),
     slideDuration: 1000, // default set
     autoplay: true, // default is false
     onInit: function() {
