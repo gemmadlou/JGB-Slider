@@ -4,10 +4,10 @@ class Initializer {
     constructor(options) {
 
         this.sliders = [];
+        
+        options = options || {};
 
-        if (options.selector === undefined) {
-            return;
-        }
+        options.selector = (options.selector === undefined) ? '.js-slider' : options.selector;
 
         var elements = document.querySelectorAll(options.selector);
 

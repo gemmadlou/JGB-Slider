@@ -9234,9 +9234,9 @@ var Initializer = function Initializer(options) {
 
     this.sliders = [];
 
-    if (options.selector === undefined) {
-        return;
-    }
+    options = options || {};
+
+    options.selector = options.selector === undefined ? '.js-slider' : options.selector;
 
     var elements = document.querySelectorAll(options.selector);
 
