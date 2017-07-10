@@ -77,9 +77,11 @@ var style = Object.assign(styleConfig, {
         publicPath: '/dist'
     }
 });
+
 style.plugins.push(new ExtractTextPlugin({
     filename: (env === 'production') ? '[name].min.css' : '[name].css'
 }));
+
 if (env !== 'production') {
     style.entry.example = './src/scss/example.scss';
 }

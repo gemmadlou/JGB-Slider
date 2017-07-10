@@ -1,13 +1,16 @@
 import Model from './Model.js';
 import View from './View.js';
 
-module.exports = class {
+export default class {
 
     constructor(userSettings) {
 
         let defaults = {
             el,
-            blockname: 'js-slider'
+            blockname: 'js-slider',
+            beforeSlide: function() {},
+            afterSlide: function() {},
+            onInit: function() {}
         };
 
         this.settings = Object.assign({}, defaults, userSettings);
@@ -29,6 +32,8 @@ module.exports = class {
         this.model = new Model(this.view.slides.length);
 
         this.eventHandlers();
+
+        this.settings.onInit();
     }
 
     eventHandlers() {
@@ -45,14 +50,22 @@ module.exports = class {
         }
     }
 
+    updateSliderPosition() {
+        this.settings.beforeSlide();
+        this.view.slider.style['margin-left'] = this.model.getSliderPosition();
+        var timer = setTimeout(() => {
+            this.settings.afterSlide();
+        }, this.settings.slideDuration);
+    }
+
     next() {
         this.model.action('next');
-        this.view.slider.style['margin-left'] = this.model.getSliderPosition();
+        this.updateSliderPosition();
     }
 
     previous() {
         this.model.action('previous');
-        this.view.slider.style['margin-left'] = this.model.getSliderPosition();
+        this.updateSliderPosition();
     }
 
     log(msg) {

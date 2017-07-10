@@ -34,10 +34,9 @@
       <script>
           var events = document.getElementById('events');
           var el = new BTMSlider({
-              el: document.querySelector('.js-slider'),
-              blockname: 'js-slider',
-              slideDuration: 1200,
-              init: function() {
+              selector: '.js-slider',
+              slideDuration: 300,
+              onInit: function() {
                   events.innerHTML += '<li>Slider initialized</li>';
               },
               beforeSlide: function() {

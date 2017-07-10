@@ -9225,7 +9225,32 @@ var _Slider2 = _interopRequireDefault(_Slider);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-module.exports = _Slider2.default;
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Initializer = function Initializer(options) {
+    var _this = this;
+
+    _classCallCheck(this, Initializer);
+
+    this.sliders = [];
+
+    if (options.selector === undefined) {
+        return;
+    }
+
+    var elements = document.querySelectorAll(options.selector);
+
+    elements.forEach(function (element) {
+
+        if (options.selector.charAt(0) === '.' || options.selector.charAt(0) === '#') {
+            options.blockname = options.selector.slice(1);
+            options.el = element;
+            _this.sliders.push(new _Slider2.default(options));
+        }
+    });
+};
+
+module.exports = Initializer;
 
 /***/ }),
 /* 85 */
@@ -9384,6 +9409,10 @@ exports.default = _class;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _Model = __webpack_require__(85);
@@ -9398,13 +9427,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-module.exports = function () {
+var _class = function () {
     function _class(userSettings) {
         _classCallCheck(this, _class);
 
         var defaults = {
             el: el,
-            blockname: 'js-slider'
+            blockname: 'js-slider',
+            beforeSlide: function beforeSlide() {},
+            afterSlide: function afterSlide() {},
+            onInit: function onInit() {}
         };
 
         this.settings = Object.assign({}, defaults, userSettings);
@@ -9425,6 +9457,8 @@ module.exports = function () {
             this.model = new _Model2.default(this.view.slides.length);
 
             this.eventHandlers();
+
+            this.settings.onInit();
         }
     }, {
         key: 'eventHandlers',
@@ -9444,16 +9478,27 @@ module.exports = function () {
             }
         }
     }, {
+        key: 'updateSliderPosition',
+        value: function updateSliderPosition() {
+            var _this2 = this;
+
+            this.settings.beforeSlide();
+            this.view.slider.style['margin-left'] = this.model.getSliderPosition();
+            var timer = setTimeout(function () {
+                _this2.settings.afterSlide();
+            }, this.settings.slideDuration);
+        }
+    }, {
         key: 'next',
         value: function next() {
             this.model.action('next');
-            this.view.slider.style['margin-left'] = this.model.getSliderPosition();
+            this.updateSliderPosition();
         }
     }, {
         key: 'previous',
         value: function previous() {
             this.model.action('previous');
-            this.view.slider.style['margin-left'] = this.model.getSliderPosition();
+            this.updateSliderPosition();
         }
     }, {
         key: 'log',
@@ -9464,6 +9509,8 @@ module.exports = function () {
 
     return _class;
 }();
+
+exports.default = _class;
 
 /***/ })
 /******/ ]);
