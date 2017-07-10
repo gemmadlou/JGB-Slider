@@ -28,22 +28,15 @@
           </ol>
       </div>
       <ul id="events">
-        <li>Events:</li>
+        <li>slideDuration: 300</li>
       </ul>
       <script src="../dist/btm-slider.js"></script>
       <script>
           var events = document.getElementById('events');
           var el = new BTMSlider({
               selector: '.js-slider',
-              onInit: function() {
-                  events.innerHTML += '<li>Slider initialized</li>';
-              },
-              beforeSlide: function() {
-                  events.innerHTML += '<li>Before slide event</li>';
-              },
-              afterSlide: function() {
-                  events.innerHTML += '<li>After slide event</li>';
-              }
+              slideDuration: 300,
+              autoplay: true
           });
 
       </script>

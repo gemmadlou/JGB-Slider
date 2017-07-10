@@ -9,26 +9,29 @@
  */
 export default class {
     constructor(numberOfSlides) {
+
         this.state = {
             currentSlide:  1,
             numberOfSlides: numberOfSlides || 0
         }
     }
 
-    handle = {
+    isLastSlide(state) {
+        return this.state.currentSlide === this.state.numberOfSlides;
+    }
 
-        next: (state) => {
-            let nextSlideNumber = isLastSlide(state) ? 1 : state.currentSlide + 1;
-            state.currentSlide = nextSlideNumber;
-            return state;
-        },
+    isFirstSlide(state) {
+        return this.state.currentSlide === 1;
+    }
 
-        previous: (state) => {
-            let previousSlideNumber = isFirstSlide(state) ? state.numberOfSlides : state.currentSlide - 1;
-            state.currentSlide = previousSlideNumber;
-            return state;
-        }
+    next() {
+        let nextSlideNumber = this.isLastSlide() ? 1 : this.state.currentSlide + 1;
+        this.state.currentSlide = nextSlideNumber;
+    }
 
+    previous() {
+        let previousSlideNumber = this.isFirstSlide() ? this.state.numberOfSlides : this.state.currentSlide - 1;
+        this.state.currentSlide = previousSlideNumber;
     }
 
     getSliderPosition() {
@@ -36,27 +39,4 @@ export default class {
         return percentage + '%';
     }
 
-    getState() {
-        return Object.assign({}, this.state);
-    }
-
-    action(action, data) {
-        if (typeof this.handle[action] !== 'function') {
-            return;
-        }
-
-        try {
-            this.state = this.handle[action](this.getState(), data);
-        } catch (e) {
-            console.log(e);
-        }
-    }
-}
-
-export function isLastSlide(state) {
-    return state.currentSlide === state.numberOfSlides;
-}
-
-export function isFirstSlide(state) {
-    return state.currentSlide === 1;
 }

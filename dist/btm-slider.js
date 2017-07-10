@@ -9219,7 +9219,7 @@ function isUndefined(arg) {
 "use strict";
 
 
-var _Slider = __webpack_require__(87);
+var _Slider = __webpack_require__(85);
 
 var _Slider2 = _interopRequireDefault(_Slider);
 
@@ -9241,6 +9241,10 @@ var Initializer = function Initializer(options) {
     var elements = document.querySelectorAll(options.selector);
 
     elements.forEach(function (element) {
+
+        /**
+         * @todo Check slider has been initliazed already
+         */
 
         if (options.selector.charAt(0) === '.' || options.selector.charAt(0) === '#') {
             options.blockname = options.selector.slice(1);
@@ -9265,8 +9269,124 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-exports.isLastSlide = isLastSlide;
-exports.isFirstSlide = isFirstSlide;
+var _Model = __webpack_require__(86);
+
+var _Model2 = _interopRequireDefault(_Model);
+
+var _View = __webpack_require__(87);
+
+var _View2 = _interopRequireDefault(_View);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _class = function () {
+    function _class(userSettings) {
+        _classCallCheck(this, _class);
+
+        var defaults = {
+            el: el,
+            blockname: 'js-slider',
+            slideDuration: 1200,
+            autoplay: false,
+            beforeSlide: function beforeSlide() {},
+            afterSlide: function afterSlide() {},
+            onInit: function onInit() {}
+        };
+
+        this.settings = Object.assign({}, defaults, userSettings);
+
+        this.init();
+    }
+
+    _createClass(_class, [{
+        key: 'init',
+        value: function init() {
+            this.view = new _View2.default(this.settings.el, this.settings.blockname);
+
+            if (!this.view.isValid()) {
+                this.log('Slider dom is invalid.');
+                return;
+            }
+
+            this.model = new _Model2.default(this.view.slides.length);
+
+            this.setUpView();
+
+            this.eventHandlers();
+
+            this.settings.onInit();
+        }
+    }, {
+        key: 'setUpView',
+        value: function setUpView() {
+            this.view.slider.style.transitionDuration = this.settings.slideDuration + 'ms';
+        }
+    }, {
+        key: 'eventHandlers',
+        value: function eventHandlers() {
+            var _this = this;
+
+            if (this.view.canClickPreviousButton()) {
+                this.view.prev.addEventListener('click', function () {
+                    _this.previous();
+                });
+            }
+
+            if (this.view.canClickNextButton()) {
+                this.view.next.addEventListener('click', function () {
+                    _this.next();
+                });
+            }
+        }
+    }, {
+        key: 'updateSliderPosition',
+        value: function updateSliderPosition() {
+            var _this2 = this;
+
+            this.settings.beforeSlide();
+            this.view.slider.style['margin-left'] = this.model.getSliderPosition();
+            var timer = setTimeout(function () {
+                _this2.settings.afterSlide();
+            }, this.settings.slideDuration);
+        }
+    }, {
+        key: 'next',
+        value: function next() {
+            this.model.next();
+            this.updateSliderPosition();
+        }
+    }, {
+        key: 'previous',
+        value: function previous() {
+            this.model.previous();
+            this.updateSliderPosition();
+        }
+    }, {
+        key: 'log',
+        value: function log(msg) {
+            console.log(msg);
+        }
+    }]);
+
+    return _class;
+}();
+
+exports.default = _class;
+
+/***/ }),
+/* 86 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -9283,22 +9403,6 @@ var _class = function () {
     function _class(numberOfSlides) {
         _classCallCheck(this, _class);
 
-        this.handle = {
-
-            next: function next(state) {
-                var nextSlideNumber = isLastSlide(state) ? 1 : state.currentSlide + 1;
-                state.currentSlide = nextSlideNumber;
-                return state;
-            },
-
-            previous: function previous(state) {
-                var previousSlideNumber = isFirstSlide(state) ? state.numberOfSlides : state.currentSlide - 1;
-                state.currentSlide = previousSlideNumber;
-                return state;
-            }
-
-        };
-
         this.state = {
             currentSlide: 1,
             numberOfSlides: numberOfSlides || 0
@@ -9306,28 +9410,32 @@ var _class = function () {
     }
 
     _createClass(_class, [{
+        key: 'isLastSlide',
+        value: function isLastSlide(state) {
+            return this.state.currentSlide === this.state.numberOfSlides;
+        }
+    }, {
+        key: 'isFirstSlide',
+        value: function isFirstSlide(state) {
+            return this.state.currentSlide === 1;
+        }
+    }, {
+        key: 'next',
+        value: function next() {
+            var nextSlideNumber = this.isLastSlide() ? 1 : this.state.currentSlide + 1;
+            this.state.currentSlide = nextSlideNumber;
+        }
+    }, {
+        key: 'previous',
+        value: function previous() {
+            var previousSlideNumber = this.isFirstSlide() ? this.state.numberOfSlides : this.state.currentSlide - 1;
+            this.state.currentSlide = previousSlideNumber;
+        }
+    }, {
         key: 'getSliderPosition',
         value: function getSliderPosition() {
             var percentage = (this.state.currentSlide - 1) * -100;
             return percentage + '%';
-        }
-    }, {
-        key: 'getState',
-        value: function getState() {
-            return Object.assign({}, this.state);
-        }
-    }, {
-        key: 'action',
-        value: function action(_action, data) {
-            if (typeof this.handle[_action] !== 'function') {
-                return;
-            }
-
-            try {
-                this.state = this.handle[_action](this.getState(), data);
-            } catch (e) {
-                console.log(e);
-            }
         }
     }]);
 
@@ -9335,16 +9443,9 @@ var _class = function () {
 }();
 
 exports.default = _class;
-function isLastSlide(state) {
-    return state.currentSlide === state.numberOfSlides;
-}
-
-function isFirstSlide(state) {
-    return state.currentSlide === 1;
-}
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9394,116 +9495,6 @@ var _class = function () {
         key: 'canClickNextButton',
         value: function canClickNextButton() {
             return this.next !== 'undefined';
-        }
-    }]);
-
-    return _class;
-}();
-
-exports.default = _class;
-
-/***/ }),
-/* 87 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _Model = __webpack_require__(85);
-
-var _Model2 = _interopRequireDefault(_Model);
-
-var _View = __webpack_require__(86);
-
-var _View2 = _interopRequireDefault(_View);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var _class = function () {
-    function _class(userSettings) {
-        _classCallCheck(this, _class);
-
-        var defaults = {
-            el: el,
-            blockname: 'js-slider',
-            beforeSlide: function beforeSlide() {},
-            afterSlide: function afterSlide() {},
-            onInit: function onInit() {}
-        };
-
-        this.settings = Object.assign({}, defaults, userSettings);
-
-        this.init();
-    }
-
-    _createClass(_class, [{
-        key: 'init',
-        value: function init() {
-            this.view = new _View2.default(this.settings.el, this.settings.blockname);
-
-            if (!this.view.isValid()) {
-                this.log('Slider dom is invalid.');
-                return;
-            }
-
-            this.model = new _Model2.default(this.view.slides.length);
-
-            this.eventHandlers();
-
-            this.settings.onInit();
-        }
-    }, {
-        key: 'eventHandlers',
-        value: function eventHandlers() {
-            var _this = this;
-
-            if (this.view.canClickPreviousButton()) {
-                this.view.prev.addEventListener('click', function () {
-                    _this.previous();
-                });
-            }
-
-            if (this.view.canClickNextButton()) {
-                this.view.next.addEventListener('click', function () {
-                    _this.next();
-                });
-            }
-        }
-    }, {
-        key: 'updateSliderPosition',
-        value: function updateSliderPosition() {
-            var _this2 = this;
-
-            this.settings.beforeSlide();
-            this.view.slider.style['margin-left'] = this.model.getSliderPosition();
-            var timer = setTimeout(function () {
-                _this2.settings.afterSlide();
-            }, this.settings.slideDuration);
-        }
-    }, {
-        key: 'next',
-        value: function next() {
-            this.model.action('next');
-            this.updateSliderPosition();
-        }
-    }, {
-        key: 'previous',
-        value: function previous() {
-            this.model.action('previous');
-            this.updateSliderPosition();
-        }
-    }, {
-        key: 'log',
-        value: function log(msg) {
-            console.log(msg);
         }
     }]);
 

@@ -8,6 +8,8 @@ export default class {
         let defaults = {
             el,
             blockname: 'js-slider',
+            slideDuration: 1200,
+            autoplay: false,
             beforeSlide: function() {},
             afterSlide: function() {},
             onInit: function() {}
@@ -31,9 +33,15 @@ export default class {
 
         this.model = new Model(this.view.slides.length);
 
+        this.setUpView();
+
         this.eventHandlers();
 
         this.settings.onInit();
+    }
+
+    setUpView() {
+        this.view.slider.style.transitionDuration = this.settings.slideDuration + 'ms';
     }
 
     eventHandlers() {
@@ -59,12 +67,12 @@ export default class {
     }
 
     next() {
-        this.model.action('next');
+        this.model.next();
         this.updateSliderPosition();
     }
 
     previous() {
-        this.model.action('previous');
+        this.model.previous();
         this.updateSliderPosition();
     }
 
