@@ -9,7 +9,7 @@
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --progress --watch --env dev",
     "server": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev"
   },
-  "author": "",
+  "author": "Gemma Black",
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.25.0",

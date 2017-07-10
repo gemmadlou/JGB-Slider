@@ -28,20 +28,57 @@ Import the sass file
 ## Instantiation
 
 ```
-BTMSlider({
-    el: document.querySelector('.js-slider'),
+<div class="example-slider">
+    <span class="example-slider__prev-slide"></span>
+    <span class="example-slider__next-slide"></span>
+    <ol class="example-slider__slider">
+        <li class="example-slider__slide">
+            <img src="http://unsplash.it/1200/500" />
+        </li>
+        <li class="example-slider__slide">
+            <img src="http://unsplash.it/1200/500?image=123" />
+        </li>
+        <li class="example-slider__slide">
+            <img src="http://unsplash.it/1200/500?image=173" />
+        </li>
+        <li class="example-slider__slide">
+            <img src="http://unsplash.it/1200/500?image=143" />
+        </li>
+        <li class="example-slider__slide">
+            <img src="http://unsplash.it/1200/500?image=423" />
+        </li>
+    </ol>
+</div>
+```
+
+```
+var sliders = new BTMSlider();
+```
+
+or
+
+```
+var sliders = new BTMSlider({
+    el: document.querySelector('.example-slider'), // Default is .js-slider
     slideDuration: 1000, // default set
     autoplay: true, // default is false
+    onInit: function() {
+        alert('Slider initialized')
+    }
 });
 ```
 
 ### The css follows BEM
 
 .block
+
 .block__slider
+
 .block__slide
-.block__prev-button
-.block__next-button
+
+.block__prev-slide
+
+.block__next-slide
 
 
 ### Methods
@@ -61,25 +98,21 @@ instance.disableAutoplay();
 ### Eventhandlers
 
 ```
-onStartAutoplay
+onStartAutoplay: function() { ... },
 
-onPauseAutoplay
+onPauseAutoplay: function() { ... },
 
-onStopAutoplay
+onStopAutoplay: function() { ... },
 
-onInit
+onInit: function() { ... },
 
-beforeSlide
+beforeSlide: function() { ... },
 
-afterSlide
+afterSlide: function() { ... }
 
 ```
 
 ### Multiple sliders?
 
-You are returned an array of event handlers which are created when you initialise BTMSlider.
+You are returned an array of instances which are created when you initialize BTMSlider.
 Therefore, you can have multiple sliders on a page using the same class.
-
-### Changing transition speed
-
-Do this via CSS.
