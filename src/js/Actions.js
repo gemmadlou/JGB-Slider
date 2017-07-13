@@ -31,6 +31,7 @@ export const transitionTo = (Slide, slideToGet) => {
     }
 
     let slide = copy(Slide);
+    let currentslide = getCurrentSlide(slide);
 
     if (slideToGet > slide.numberOfSlides) {
         throw new Error('Transition slide does not exist');
@@ -44,12 +45,21 @@ export const transitionTo = (Slide, slideToGet) => {
         throw new Error('Transition slide cannot be zero');
     }
 
-    slide.transitionTo = slide.currentSlide + 1;
+    if (slideToGet === currentslide) {
+        throw new Error('Cannot transition to the same slide');
+    }
+
+    slide.transitionTo = slideToGet;
     slide.currentSlide = undefined;
 
     return slide;
 }
 
-export const getNextSlide = (Slide) => {
+export const getCurrentSlide = (Slide) => {
+    return Slide.currentSlide || Slide.transitionTo;
+}
 
+export const getNextSlide = (Slide) => {
+    let currentSlide = getCurrentSlide(Slide);
+    return currentSlide === Slide.numberOfSlides ? 1 : currentSlide + 1;
 }
