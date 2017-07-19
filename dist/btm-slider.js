@@ -3896,7 +3896,7 @@ function reloadApp() {
 	}
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, "?http://localhost:8080"))
+/* WEBPACK VAR INJECTION */}.call(exports, "?http://localhost:8081"))
 
 /***/ }),
 /* 39 */
@@ -9257,8 +9257,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 module.exports = function (options) {
 
-    var sliders = [];
-
     options = options || {};
 
     options.selector = options.selector === undefined ? '.js-slider' : options.selector;
@@ -9274,7 +9272,7 @@ module.exports = function (options) {
         if (options.selector.charAt(0) === '.' || options.selector.charAt(0) === '#') {
             options.blockname = options.selector.slice(1);
             options.el = element;
-            sliders.push(new _Slider2.default(options));
+            element.slider = new _Slider2.default(options);
         }
     });
 

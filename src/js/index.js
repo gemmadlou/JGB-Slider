@@ -2,8 +2,6 @@ import Slider from './Slider.js';
 
 module.exports = function(options) {
 
-    let sliders = [];
-
     options = options || {};
 
     options.selector = (options.selector === undefined) ? '.js-slider' : options.selector;
@@ -19,7 +17,7 @@ module.exports = function(options) {
         if (options.selector.charAt(0) === '.' || options.selector.charAt(0) === '#') {
             options.blockname = options.selector.slice(1);
             options.el = element;
-            sliders.push(new Slider(options));
+            element.slider = new Slider(options);
         }
 
     });
