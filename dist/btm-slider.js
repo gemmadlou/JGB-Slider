@@ -9255,36 +9255,7 @@ var _Slider2 = _interopRequireDefault(_Slider);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var InitializerOld = function InitializerOld(options) {
-    var _this = this;
-
-    _classCallCheck(this, InitializerOld);
-
-    this.sliders = [];
-
-    options = options || {};
-
-    options.selector = options.selector === undefined ? '.js-slider' : options.selector;
-
-    var elements = document.querySelectorAll(options.selector);
-
-    elements.forEach(function (element) {
-
-        /**
-         * @todo Check slider has been initliazed already
-         */
-
-        if (options.selector.charAt(0) === '.' || options.selector.charAt(0) === '#') {
-            options.blockname = options.selector.slice(1);
-            options.el = element;
-            _this.sliders.push(new _Slider2.default(options));
-        }
-    });
-};
-
-var Initializer = function Initializer(options) {
+module.exports = function (options) {
 
     var sliders = [];
 
@@ -9310,8 +9281,6 @@ var Initializer = function Initializer(options) {
     return sliders;
 };
 
-module.exports = Initializer;
-
 /***/ }),
 /* 87 */
 /***/ (function(module, exports, __webpack_require__) {
@@ -9332,6 +9301,14 @@ var _InitHandler2 = _interopRequireDefault(_InitHandler);
 var _TransitionToNextSlideHandler = __webpack_require__(90);
 
 var _TransitionToNextSlideHandler2 = _interopRequireDefault(_TransitionToNextSlideHandler);
+
+var _TransitionToPreviousSlideHandler = __webpack_require__(100);
+
+var _TransitionToPreviousSlideHandler2 = _interopRequireDefault(_TransitionToPreviousSlideHandler);
+
+var _TransitionToHandler = __webpack_require__(103);
+
+var _TransitionToHandler2 = _interopRequireDefault(_TransitionToHandler);
 
 var _Bus = __webpack_require__(96);
 
@@ -9393,6 +9370,9 @@ var _class = function () {
             this.dom.next.addEventListener('click', function () {
                 _this.next();
             });
+            this.dom.prev.addEventListener('click', function () {
+                _this.prev();
+            });
         }
     }, {
         key: 'listenToErrors',
@@ -9403,6 +9383,12 @@ var _class = function () {
                 console.log(err, 'error');
             });
             this.bus.on('TransitionToNextSlideFailed', function (err) {
+                console.log(err, 'error', _this2.store);
+            });
+            this.bus.on('TransitionToPreviousSlideFailed', function (err) {
+                console.log(err, 'error', _this2.store);
+            });
+            this.bus.on('TransitionToFailed', function (err) {
                 console.log(err, 'error', _this2.store);
             });
             this.bus.on('TransitionFailed', function (err) {
@@ -9418,12 +9404,28 @@ var _class = function () {
             this.bus.on('TransitionToNextSlideStarted', function (state) {
                 _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
             });
+            this.bus.on('TransitionToPreviousSlideStarted', function (state) {
+                _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
+            });
+            this.bus.on('TransitionToStarted', function (state) {
+                _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
+            });
             this.bus.on('TransitionCompleted', function (state) {});
         }
     }, {
         key: 'next',
         value: function next() {
             (0, _TransitionToNextSlideHandler2.default)(this.store, this.bus);
+        }
+    }, {
+        key: 'prev',
+        value: function prev() {
+            (0, _TransitionToPreviousSlideHandler2.default)(this.store, this.bus);
+        }
+    }, {
+        key: 'goTo',
+        value: function goTo(slideNumber) {
+            (0, _TransitionToHandler2.default)(this.store, this.bus, slideNumber);
         }
     }]);
 
@@ -9501,8 +9503,7 @@ Object.defineProperty(exports, "__esModule", {
 
 exports.default = function (store, bus) {
     try {
-        var newstate = new _TransitionToNextSlide2.default(store.get());
-        store.update(newstate);
+        store.update(new _TransitionToNextSlide2.default(store.get()));
         bus.emit('TransitionToNextSlideStarted');
         setTimeout(function () {
             (0, _CompleteTransitionHandler2.default)(store.get(), bus);
@@ -9818,6 +9819,122 @@ exports.default = function (state) {
 var _GetCurrentSlide = __webpack_require__(13);
 
 var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 100 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (store, bus) {
+    try {
+        store.update(new _TransitionToPreviousSlide2.default(store.get()));
+        bus.emit('TransitionToPreviousSlideStarted');
+        setTimeout(function () {
+            (0, _CompleteTransitionHandler2.default)(store.get(), bus);
+        }, store.get().slideDuration);
+    } catch (err) {
+        bus.emit('TransitionToPreviousSlideFailed', err);
+    }
+};
+
+var _TransitionToPreviousSlide = __webpack_require__(101);
+
+var _TransitionToPreviousSlide2 = _interopRequireDefault(_TransitionToPreviousSlide);
+
+var _CompleteTransitionHandler = __webpack_require__(94);
+
+var _CompleteTransitionHandler2 = _interopRequireDefault(_CompleteTransitionHandler);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 101 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (Slide) {
+    return (0, _TransitionTo2.default)(Slide, (0, _GetPreviousSlide2.default)(Slide));
+};
+
+var _GetPreviousSlide = __webpack_require__(102);
+
+var _GetPreviousSlide2 = _interopRequireDefault(_GetPreviousSlide);
+
+var _TransitionTo = __webpack_require__(93);
+
+var _TransitionTo2 = _interopRequireDefault(_TransitionTo);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 102 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (Slide) {
+    if (Slide === undefined) {
+        throw new Error('Getting previous slide requires state');
+    }
+    var currentSlide = (0, _GetCurrentSlide2.default)(Slide);
+    return currentSlide === 1 ? Slide.numberOfSlides : currentSlide - 1;
+};
+
+var _GetCurrentSlide = __webpack_require__(13);
+
+var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 103 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (store, bus, slideNumber) {
+    try {
+        store.update(new _TransitionTo2.default(store.get(), slideNumber));
+        bus.emit('TransitionToStarted');
+        setTimeout(function () {
+            (0, _CompleteTransitionHandler2.default)(store.get(), bus);
+        }, store.get().slideDuration);
+    } catch (err) {
+        bus.emit('TransitionToFailed', err);
+    }
+};
+
+var _TransitionTo = __webpack_require__(93);
+
+var _TransitionTo2 = _interopRequireDefault(_TransitionTo);
+
+var _CompleteTransitionHandler = __webpack_require__(94);
+
+var _CompleteTransitionHandler2 = _interopRequireDefault(_CompleteTransitionHandler);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

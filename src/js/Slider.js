@@ -1,5 +1,7 @@
 import InitHandler from './ActionHandlers/InitHandler.js';
 import TransitionToNextSlideHandler from './ActionHandlers/TransitionToNextSlideHandler.js';
+import TransitionToPreviousSlideHandler from './ActionHandlers/TransitionToPreviousSlideHandler.js';
+import TransitionToHandler from './ActionHandlers/TransitionToHandler.js';
 import Bus from './Helpers/Bus.js';
 import Store from './Helpers/Store.js';
 import GetCurrentSlide from './ActionHelper/GetCurrentSlide.js';
@@ -38,6 +40,9 @@ export default class {
         this.dom.next.addEventListener('click', () => {
             this.next();
         });
+        this.dom.prev.addEventListener('click', () => {
+            this.prev();
+        });
     }
 
     listenToErrors() {
@@ -45,6 +50,12 @@ export default class {
             console.log(err, 'error');
         });
         this.bus.on('TransitionToNextSlideFailed', (err) => {
+            console.log(err, 'error', this.store);
+        });
+        this.bus.on('TransitionToPreviousSlideFailed', (err) => {
+            console.log(err, 'error', this.store);
+        });
+        this.bus.on('TransitionToFailed', (err) => {
             console.log(err, 'error', this.store);
         });
         this.bus.on('TransitionFailed', (err) => {
@@ -59,6 +70,12 @@ export default class {
         this.bus.on('TransitionToNextSlideStarted', (state) => {
             this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());
         });
+        this.bus.on('TransitionToPreviousSlideStarted', (state) => {
+            this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());
+        });
+        this.bus.on('TransitionToStarted', (state) => {
+            this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());
+        });
         this.bus.on('TransitionCompleted', (state) => {
 
         });
@@ -66,6 +83,14 @@ export default class {
 
     next() {
         TransitionToNextSlideHandler(this.store, this.bus);
+    }
+
+    prev() {
+        TransitionToPreviousSlideHandler(this.store, this.bus);
+    }
+
+    goTo(slideNumber) {
+        TransitionToHandler(this.store, this.bus, slideNumber);
     }
 
 }
