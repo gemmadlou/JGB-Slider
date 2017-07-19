@@ -74,3 +74,11 @@ export const getPreviousSlide = (Slide) => {
     let currentSlide = getCurrentSlide(Slide);
     return currentSlide === 1 ? Slide.numberOfSlides : currentSlide - 1;
 }
+
+export const transitionToNextSlide = (Slide) => {
+    return transitionTo(Slide, getNextSlide(Slide));
+}
+
+export const transitionToPreviousSlide = (Slide) => {
+    return transitionTo(Slide, getPreviousSlide(Slide));
+}

@@ -142,4 +142,33 @@ describe('Slide Instance:', function() {
             assert.equal(2, slider.transitionTo);
         });
     });
+
+    describe('transitionToNextSlide', function() {
+        it('should go to next incremental slide 1 -> 2', function() {
+            let slider = actions.Init(2);
+            slider = actions.transitionToNextSlide(slider);
+            assert.equal(2, slider.transitionTo);
+        });
+        it('should go to next incremental slide 1 -> 2 -> 3', function() {
+            let slider = actions.Init(3);
+            slider = actions.transitionToNextSlide(slider);
+            slider = actions.transitionToNextSlide(slider);
+            assert.equal(3, slider.transitionTo);
+        });
+    });
+
+    describe('transitionToPreviousSlide', function() {
+        it('should go to next incremental slide 1 -> 2', function() {
+            let slider = actions.Init(2);
+            slider = actions.transitionToNextSlide(slider);
+            assert.equal(2, slider.transitionTo);
+        });
+        it('should go to next incremental slide 1 -> 3 -> 2', function() {
+            let slider = actions.Init(3);
+            slider = actions.transitionToPreviousSlide(slider);
+            slider = actions.transitionToPreviousSlide(slider);
+            assert.equal(2, slider.transitionTo);
+        });
+    });
+
 });
