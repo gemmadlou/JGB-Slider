@@ -82,3 +82,13 @@ export const transitionToNextSlide = (Slide) => {
 export const transitionToPreviousSlide = (Slide) => {
     return transitionTo(Slide, getPreviousSlide(Slide));
 }
+
+export const completeTransition = (state) => {
+    if (state === undefined) {
+        throw new Error('state is undefined');
+    }
+    let slide = copy(state);
+    slide.currentSlide = slide.transitionTo;
+    slide.transitionTo = undefined;
+    return slide;
+}
