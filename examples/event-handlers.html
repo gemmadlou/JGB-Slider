@@ -33,7 +33,7 @@
       <script src="../dist/btm-slider.js"></script>
       <script>
           var events = document.getElementById('events');
-          var el = new BTMSlider({
+          var els = BTMSlider({
               selector: '.js-slider',
               onInit: function() {
                   events.innerHTML += '<li>Slider initialized</li>';
@@ -45,6 +45,7 @@
                   events.innerHTML += '<li>After slide event</li>';
               }
           });
+          console.log(els)
 
       </script>
   </body>

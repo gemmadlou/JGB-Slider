@@ -9227,10 +9227,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Initializer = function Initializer(options) {
+var InitializerOld = function InitializerOld(options) {
     var _this = this;
 
-    _classCallCheck(this, Initializer);
+    _classCallCheck(this, InitializerOld);
 
     this.sliders = [];
 
@@ -9254,6 +9254,32 @@ var Initializer = function Initializer(options) {
     });
 };
 
+var Initializer = function Initializer(options) {
+
+    var sliders = [];
+
+    options = options || {};
+
+    options.selector = options.selector === undefined ? '.js-slider' : options.selector;
+
+    var elements = document.querySelectorAll(options.selector);
+
+    elements.forEach(function (element) {
+
+        /**
+         * @todo Check slider has been initliazed already
+         */
+
+        if (options.selector.charAt(0) === '.' || options.selector.charAt(0) === '#') {
+            options.blockname = options.selector.slice(1);
+            options.el = element;
+            sliders.push(new _Slider2.default(options));
+        }
+    });
+
+    return sliders;
+};
+
 module.exports = Initializer;
 
 /***/ }),
@@ -9269,13 +9295,33 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _Model = __webpack_require__(86);
+var _InitHandler = __webpack_require__(87);
 
-var _Model2 = _interopRequireDefault(_Model);
+var _InitHandler2 = _interopRequireDefault(_InitHandler);
 
-var _View = __webpack_require__(87);
+var _TransitionToNextSlideHandler = __webpack_require__(90);
 
-var _View2 = _interopRequireDefault(_View);
+var _TransitionToNextSlideHandler2 = _interopRequireDefault(_TransitionToNextSlideHandler);
+
+var _Bus = __webpack_require__(86);
+
+var _Bus2 = _interopRequireDefault(_Bus);
+
+var _Store = __webpack_require__(98);
+
+var _Store2 = _interopRequireDefault(_Store);
+
+var _GetCurrentSlide = __webpack_require__(89);
+
+var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
+
+var _GetNextSlide = __webpack_require__(97);
+
+var _GetNextSlide2 = _interopRequireDefault(_GetNextSlide);
+
+var _GetSliderPositionAsPercentage = __webpack_require__(99);
+
+var _GetSliderPositionAsPercentage2 = _interopRequireDefault(_GetSliderPositionAsPercentage);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9283,188 +9329,71 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var _class = function () {
     function _class(userSettings) {
-        var _this = this;
-
         _classCallCheck(this, _class);
 
-        this.handle = {
-            onStartAutoplay: function onStartAutoplay() {
-                clearTimeout(_this.settings.startAutoplayTimer);
+        this.options = Object.assign({}, userSettings);
 
-                if (_this.settings.autoplayState === 'paused') {
-                    return;
-                }
+        try {
+            this.dom = {};
+            this.dom.slider = this.options.el.querySelector('.' + this.options.blockname + '__slider');
+            this.dom.slides = this.options.el.querySelectorAll('.' + this.options.blockname + '__slide');
+            this.dom.next = this.options.el.querySelector('.' + this.options.blockname + '__next-slide');
+            this.dom.prev = this.options.el.querySelector('.' + this.options.blockname + '__prev-slide');
+        } catch (err) {
+            console.log('The dom is missing some elements', err);
+            return;
+        }
 
-                _this.setNewAutoplayState('started');
+        this.store = new _Store2.default();
+        this.bus = new _Bus2.default();
 
-                if (_this.settings.autoplayState === 'started' && _this.settings.prevAutoplayState !== 'started') {
-                    _this.settings.onStartAutoplay();
-                }
-            },
-            onPauseAutoplay: function onPauseAutoplay() {
-                clearTimeout(_this.settings.startAutoplayTimer);
+        this.listenToErrors();
+        this.listen();
 
-                if (_this.settings.autoplayState === 'stopped') {
-                    return;
-                }
+        (0, _InitHandler2.default)(this.store, this.bus, this.dom.slides.length);
 
-                _this.setNewAutoplayState('paused');
-
-                if (_this.settings.autoplayState === 'paused') {
-                    _this.settings.onPauseAutoplay();
-                }
-            },
-            onStopAutoplay: function onStopAutoplay() {
-                clearTimeout(_this.settings.startAutoplayTimer);
-
-                _this.setNewAutoplayState('stopped');
-                _this.settings.autoplay = false;
-
-                if (_this.settings.autoplayState === 'stopped' && _this.settings.prevAutoplayState !== 'stopped') {
-                    _this.settings.onStopAutoplay();
-                }
-            }
-        };
-
-
-        var defaults = {
-            el: el,
-            blockname: 'js-slider',
-            slideDuration: 1200,
-            autoplay: false,
-            autoplaySpeed: 5000,
-            autoplayState: 'stopped',
-            prevAutoplayState: 'init',
-            startAutoplayTimer: null,
-            beforeSlide: function beforeSlide() {},
-            afterSlide: function afterSlide() {},
-            onInit: function onInit() {},
-            onStartAutoplay: function onStartAutoplay() {},
-            onStopAutoplay: function onStopAutoplay() {},
-            onPauseAutoplay: function onPauseAutoplay() {}
-        };
-
-        this.settings = Object.assign({}, defaults, userSettings);
-
-        this.init();
+        this.uiEvents();
     }
 
     _createClass(_class, [{
-        key: 'init',
-        value: function init() {
-            this.view = new _View2.default(this.settings.el, this.settings.blockname);
+        key: 'uiEvents',
+        value: function uiEvents() {
+            var _this = this;
 
-            if (!this.view.isValid()) {
-                this.log('Slider dom is invalid.');
-                return;
-            }
-
-            this.model = new _Model2.default(this.view.slides.length);
-
-            this.setUpView();
-
-            this.settings.onInit();
-
-            this.eventHandlers();
-
-            this.autoplay();
+            this.dom.next.addEventListener('click', function () {
+                _this.next();
+            });
         }
     }, {
-        key: 'autoplay',
-        value: function autoplay() {
+        key: 'listenToErrors',
+        value: function listenToErrors() {
             var _this2 = this;
 
-            clearTimeout(this.settings.startAutoplayTimer);
-
-            if (this.settings.autoplay) {
-
-                this.handle.onStartAutoplay();
-
-                this.settings.startAutoplayTimer = setTimeout(function () {
-                    _this2.next();
-                    _this2.autoplay();
-                }, this.settings.autoplaySpeed);
-            }
+            this.bus.on('InitiationFailed', function (err) {
+                console.log(err, 'error');
+            });
+            this.bus.on('TransitionToNextSlideFailed', function (err) {
+                console.log(err, 'error', _this2.store);
+            });
+            this.bus.on('TransitionFailed', function (err) {
+                console.log(err, 'error');
+            });
         }
     }, {
-        key: 'startAutoplay',
-        value: function startAutoplay() {
-            this.settings.autoplay = true;
-            this.autoplay();
-        }
-    }, {
-        key: 'pauseAutoplay',
-        value: function pauseAutoplay() {
-            this.handle.onPauseAutoplay();
-        }
-    }, {
-        key: 'disableAutoplay',
-        value: function disableAutoplay() {
-            this.handle.onStopAutoplay();
-        }
-    }, {
-        key: 'setUpView',
-        value: function setUpView() {
-            this.view.slider.style.transitionDuration = this.settings.slideDuration + 'ms';
-        }
-    }, {
-        key: 'eventHandlers',
-        value: function eventHandlers() {
+        key: 'listen',
+        value: function listen() {
             var _this3 = this;
 
-            if (this.view.canClickPreviousButton()) {
-                this.view.prev.addEventListener('click', function () {
-                    _this3.previous();
-                });
-            }
-
-            if (this.view.canClickNextButton()) {
-                this.view.next.addEventListener('click', function () {
-                    _this3.next();
-                });
-            }
-
-            this.view.el.addEventListener('mouseenter', function () {
-                _this3.pauseAutoplay();
+            this.bus.on('Initiated', function (state) {});
+            this.bus.on('TransitionToNextSlideStarted', function (state) {
+                _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
             });
-
-            this.view.el.addEventListener('mouseleave', function () {
-                _this3.autoplay();
-            });
-        }
-    }, {
-        key: 'updateSliderPosition',
-        value: function updateSliderPosition() {
-            var _this4 = this;
-
-            this.settings.beforeSlide();
-            this.view.slider.style['margin-left'] = this.model.getSliderPosition();
-            var timer = setTimeout(function () {
-                _this4.settings.afterSlide();
-            }, this.settings.slideDuration);
-        }
-    }, {
-        key: 'setNewAutoplayState',
-        value: function setNewAutoplayState(state) {
-            this.settings.prevAutoplayState = this.settings.autoplayState;
-            this.settings.autoplayState = state;
+            this.bus.on('TransitionCompleted', function (state) {});
         }
     }, {
         key: 'next',
         value: function next() {
-            this.model.next();
-            this.updateSliderPosition();
-        }
-    }, {
-        key: 'previous',
-        value: function previous() {
-            this.model.previous();
-            this.updateSliderPosition();
-        }
-    }, {
-        key: 'log',
-        value: function log(msg) {
-            console.log(msg);
+            (0, _TransitionToNextSlideHandler2.default)(this.store, this.bus);
         }
     }]);
 
@@ -9481,62 +9410,42 @@ exports.default = _class;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+	value: true
 });
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-/**
- * This manages all the state for the slider. The view depends on this completely.
- */
 var _class = function () {
-    function _class(numberOfSlides) {
-        _classCallCheck(this, _class);
+	function _class() {
+		_classCallCheck(this, _class);
 
-        this.state = {
-            currentSlide: 1,
-            numberOfSlides: numberOfSlides || 0
-        };
-    }
+		this.messages = {};
+	}
 
-    _createClass(_class, [{
-        key: 'setNumberOfSlides',
-        value: function setNumberOfSlides(numberOfSlides) {
-            this.state.numberOfSlides = numberOfSlides;
-        }
-    }, {
-        key: 'isLastSlide',
-        value: function isLastSlide() {
-            return this.state.currentSlide === this.state.numberOfSlides;
-        }
-    }, {
-        key: 'isFirstSlide',
-        value: function isFirstSlide() {
-            return this.state.currentSlide === 1;
-        }
-    }, {
-        key: 'next',
-        value: function next() {
-            var nextSlideNumber = this.isLastSlide() ? 1 : this.state.currentSlide + 1;
-            this.state.currentSlide = nextSlideNumber;
-        }
-    }, {
-        key: 'previous',
-        value: function previous() {
-            var previousSlideNumber = this.isFirstSlide() ? this.state.numberOfSlides : this.state.currentSlide - 1;
-            this.state.currentSlide = previousSlideNumber;
-        }
-    }, {
-        key: 'getSliderPosition',
-        value: function getSliderPosition() {
-            var percentage = (this.state.currentSlide - 1) * -100;
-            return percentage + '%';
-        }
-    }]);
+	_createClass(_class, [{
+		key: 'on',
+		value: function on(message, callback) {
+			if (!this.messages[message]) {
+				this.messages[message] = [];
+			}
+			if (typeof callback === 'function') {
+				this.messages[message].push(callback);
+			}
+		}
+	}, {
+		key: 'emit',
+		value: function emit(message, data) {
+			if (this.messages[message]) {
+				this.messages[message].forEach(function (func) {
+					func(data);
+				});
+			}
+		}
+	}]);
 
-    return _class;
+	return _class;
 }();
 
 exports.default = _class;
@@ -9552,46 +9461,336 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+exports.default = function (store, bus, numberOfSlides) {
+    try {
+        var newstate = new _Init2.default(numberOfSlides);
+        store.update(newstate);
+        bus.emit('Initiated');
+    } catch (err) {
+        bus.emit('InitiationFailed', err);
+    }
+};
+
+var _Init = __webpack_require__(88);
+
+var _Init2 = _interopRequireDefault(_Init);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 88 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (numberOfSlides, slideDuration) {
+
+    if (numberOfSlides === undefined) {
+        throw new Error('Total number of slides must be provided');
+    }
+
+    if (numberOfSlides === 0) {
+        throw new Error('Total slides cannot be 0');
+    }
+
+    return {
+        currentSlide: 1,
+        numberOfSlides: numberOfSlides,
+        transitionTo: undefined,
+        slideDuration: slideDuration || 1200
+    };
+};
+
+/***/ }),
+/* 89 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (Slide) {
+    return Slide.currentSlide || Slide.transitionTo;
+};
+
+/***/ }),
+/* 90 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (store, bus) {
+    try {
+        var newstate = new _TransitionToNextSlide2.default(store.get());
+        store.update(newstate);
+        bus.emit('TransitionToNextSlideStarted');
+        setTimeout(function () {
+            (0, _CompleteTransitionHandler2.default)(store.get(), bus);
+        }, store.get().slideDuration);
+    } catch (err) {
+        bus.emit('TransitionToNextSlideFailed', err);
+    }
+};
+
+var _TransitionToNextSlide = __webpack_require__(91);
+
+var _TransitionToNextSlide2 = _interopRequireDefault(_TransitionToNextSlide);
+
+var _CompleteTransitionHandler = __webpack_require__(95);
+
+var _CompleteTransitionHandler2 = _interopRequireDefault(_CompleteTransitionHandler);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (Slide) {
+    return (0, _TransitionTo2.default)(Slide, (0, _getNextSlide2.default)(Slide));
+};
+
+var _getNextSlide = __webpack_require__(92);
+
+var _getNextSlide2 = _interopRequireDefault(_getNextSlide);
+
+var _TransitionTo = __webpack_require__(93);
+
+var _TransitionTo2 = _interopRequireDefault(_TransitionTo);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 92 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (Slide) {
+    if (Slide === undefined) {
+        throw new Error('Getting next slide requires state');
+    }
+    var currentSlide = (0, _GetCurrentSlide2.default)(Slide);
+    return currentSlide === Slide.numberOfSlides ? 1 : currentSlide + 1;
+};
+
+var _GetCurrentSlide = __webpack_require__(89);
+
+var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 93 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (Slide, slideToGet) {
+
+    if (Slide === undefined) {
+        throw new Error('Slide state must be provided');
+    }
+
+    if (slideToGet === undefined) {
+        throw new Error('Transition slide must be provided');
+    }
+
+    var slide = (0, _Copy2.default)(Slide);
+    var currentslide = (0, _GetCurrentSlide2.default)(slide);
+
+    if (slideToGet > slide.numberOfSlides) {
+        throw new Error('Transition slide does not exist');
+    }
+
+    if (slideToGet < 0) {
+        throw new Error('Transition slide cannot be a negative number');
+    }
+
+    if (slideToGet === 0) {
+        throw new Error('Transition slide cannot be zero');
+    }
+
+    if (slideToGet === currentslide) {
+        throw new Error('Cannot transition to the same slide');
+    }
+
+    slide.transitionTo = slideToGet;
+    slide.currentSlide = undefined;
+    slide.transitionStartedAt = Date.now();
+    console.log(slide.transitionStartedAt);
+
+    return slide;
+};
+
+var _Copy = __webpack_require__(94);
+
+var _Copy2 = _interopRequireDefault(_Copy);
+
+var _GetCurrentSlide = __webpack_require__(89);
+
+var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (Item) {
+    return Object.assign({}, Item);
+};
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (state, bus) {
+    try {
+        bus.emit('TransitionCompleted', new _CompleteTransition2.default(state));
+    } catch (err) {
+        bus.emit('TransitionFailed', err);
+    }
+};
+
+var _CompleteTransition = __webpack_require__(96);
+
+var _CompleteTransition2 = _interopRequireDefault(_CompleteTransition);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 96 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (state) {
+    if (state === undefined) {
+        throw new Error('state is undefined');
+    }
+    var slide = (0, _Copy2.default)(state);
+
+    if (Date.now() - slide.transitionStartedAt < slide.slideDuration) {
+        throw new Error('slide has not finished transitioning');
+    }
+
+    slide.currentSlide = slide.transitionTo;
+    slide.transitionTo = undefined;
+    return slide;
+};
+
+var _Copy = __webpack_require__(94);
+
+var _Copy2 = _interopRequireDefault(_Copy);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (Slide) {
+    if (Slide === undefined) {
+        throw new Error('Getting next slide requires state');
+    }
+    var currentSlide = (0, _GetCurrentSlide2.default)(Slide);
+    return currentSlide === Slide.numberOfSlides ? 1 : currentSlide + 1;
+};
+
+var _GetCurrentSlide = __webpack_require__(89);
+
+var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 98 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _class = function () {
-    function _class(el, blockname, model) {
+    function _class() {
         _classCallCheck(this, _class);
 
-        this.el = el;
-        blockname = blockname;
-
-        if (!this.isDomElement(this.el)) {
-            return;
-        }
-
-        this.slider = this.el.querySelector('.' + blockname + '__slider');
-        this.slides = this.el.querySelectorAll('.' + blockname + '__slide');
-        this.next = this.el.querySelector('.' + blockname + '__next-slide');
-        this.prev = this.el.querySelector('.' + blockname + '__prev-slide');
+        this.data = {};
     }
 
     _createClass(_class, [{
-        key: 'isValid',
-        value: function isValid() {
-            return this.el !== undefined && this.slider !== undefined && this.slides !== undefined;
+        key: "update",
+        value: function update(data) {
+            this.data = data;
         }
     }, {
-        key: 'isDomElement',
-        value: function isDomElement(element) {
-            return element instanceof Element;
-        }
-    }, {
-        key: 'canClickPreviousButton',
-        value: function canClickPreviousButton() {
-            return this.prev !== 'undefined';
-        }
-    }, {
-        key: 'canClickNextButton',
-        value: function canClickNextButton() {
-            return this.next !== 'undefined';
+        key: "get",
+        value: function get() {
+            return this.data;
         }
     }]);
 
@@ -9599,6 +9798,28 @@ var _class = function () {
 }();
 
 exports.default = _class;
+
+/***/ }),
+/* 99 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (state) {
+    var percentage = ((0, _GetCurrentSlide2.default)(state) - 1) * -100;
+    return percentage + '%';
+};
+
+var _GetCurrentSlide = __webpack_require__(89);
+
+var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ })
 /******/ ]);
