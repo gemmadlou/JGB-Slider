@@ -44,14 +44,14 @@ describe('Slide Instance:', function() {
 
 
     describe('TransitionTo', function() {
-        it('should not go to the next slide if a state is not provided', function() {
+        it('should throw an error if state is not provided', function() {
             assert.throws(function() {
                 let slider = actions.Init(2);
                 slider = actions.TransitionTo();
             }, /Slide state must be provided/);
         });
 
-        it('should not transition if a slide number is not provided', function() {
+        it('should throw an error if slide number is not provided', function() {
             assert.throws(function() {
                 let slider = actions.Init(2);
                 slider = actions.TransitionTo(slider);
@@ -163,12 +163,12 @@ describe('Slide Instance:', function() {
     });
 
     describe('TransitionToPreviousSlide', function() {
-        it('should go to next incremental slide 1 -> 2', function() {
+        it('should go to previous slide 1 -> 2', function() {
             let slider = actions.Init(2);
             slider = actions.TransitionToNextSlide(slider);
             assert.equal(2, slider.transitionTo);
         });
-        it('should go to next incremental slide 1 -> 3 -> 2', function() {
+        it('should go to pevious slide 1 -> 3 -> 2', function() {
             let slider = actions.Init(3);
             slider = actions.TransitionToPreviousSlide(slider);
             slider = actions.TransitionToPreviousSlide(slider);
