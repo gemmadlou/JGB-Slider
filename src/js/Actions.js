@@ -60,6 +60,17 @@ export const getCurrentSlide = (Slide) => {
 }
 
 export const getNextSlide = (Slide) => {
+    if (Slide === undefined) {
+        throw new Error('Getting next slide requires state');
+    }
     let currentSlide = getCurrentSlide(Slide);
     return currentSlide === Slide.numberOfSlides ? 1 : currentSlide + 1;
+}
+
+export const getPreviousSlide = (Slide) => {
+    if (Slide === undefined) {
+        throw new Error('Getting previous slide requires state');
+    }
+    let currentSlide = getCurrentSlide(Slide);
+    return currentSlide === 1 ? Slide.numberOfSlides : currentSlide - 1;
 }

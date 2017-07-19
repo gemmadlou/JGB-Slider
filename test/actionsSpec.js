@@ -105,8 +105,8 @@ describe('Slide Instance:', function() {
         it('should fail if slide is not provided', function() {
             assert.throws(function() {
                 let slider = actions.Init(2);
-                let nextslide = getNextSlide(slider);
-            }, /Get next slide requires slide state/);
+                actions.getNextSlide();
+            }, /Getting next slide requires state/);
         });
 
         it('should get next incremental slide if not on last slide', function() {
@@ -122,6 +122,13 @@ describe('Slide Instance:', function() {
         });
     });
     describe('getPreviousSlide', function() {
+        it('should fail if slide is not provided', function() {
+            assert.throws(function() {
+                let slider = actions.Init(2);
+                actions.getPreviousSlide();
+            }, /Getting previous slide requires state/);
+        });
+
         it('should get next decremental slide if not on first slide', function() {
             let slider = actions.Init(2);
             slider = actions.transitionTo(slider, 2);
