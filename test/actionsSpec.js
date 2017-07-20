@@ -60,7 +60,7 @@ describe('Slide Instance:', function() {
         it('should set the transition time', function() {
             let slider = actions.Init(2);
             slider = actions.TransitionTo(slider, 2);
-            assert.equal(slider.transitionStartedAt, Date.now());
+            assert.equal(Date.now(), slider.transitionStartedAt);
         });
 
         it('should TransitionTo slide provided', function() {
@@ -206,6 +206,15 @@ describe('Slide Instance:', function() {
                 assert.equal(undefined, slider.transitionTo);
                 done();
             }, slider.slideDuration)
+        });
+        it('should unset the transition time', function() {
+            let slider = actions.Init(2);
+            slider = actions.TransitionTo(slider, 2);
+            setTimeout(function() {
+                slider = actions.CompleteTransition(slider);
+                assert.equal(undefined, slider.transitionStartedAt);
+                done();
+            }, slider.slideDuration);
         });
     });
 
