@@ -3,7 +3,7 @@
     <title>Getting Started</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../dist/example.css" rel="stylesheet" />
-    <link href="../dist/btm-slider.css" rel="stylesheet" />
+    <link href="../dist/jgb-slider.css" rel="stylesheet" />
   </head>
   <body>
       <div class="js-slider">
@@ -30,10 +30,10 @@
       <ul id="events">
         <li>Events:</li>
       </ul>
-      <script src="../dist/btm-slider.js"></script>
+      <script src="../dist/jgb-slider.js"></script>
       <script>
           var events = document.getElementById('events');
-          var els = BTMSlider({
+          var els = jgbslider({
               selector: '.js-slider',
               onInit: function() {
                   events.innerHTML += '<li>Slider initialized</li>';

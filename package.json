@@ -2,7 +2,7 @@
   "name": "jgb-slider",
   "version": "1.0.0",
   "description": "Vanilla JS Slider",
-  "main": "./dist/btm-slider.min.js",
+  "main": "./dist/jgb-slider.min.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --require babel-polyfill --compilers js:babel-register test",
     "build": "./node_modules/.bin/webpack --config webpack.config.js --optimize-minimize --env production",

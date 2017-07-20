@@ -3,7 +3,7 @@
     <title>Getting Started</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../dist/example.css" rel="stylesheet" />
-    <link href="../dist/btm-slider.css" rel="stylesheet" />
+    <link href="../dist/jgb-slider.css" rel="stylesheet" />
   </head>
   <body>
       <div class="example-slider">
@@ -38,10 +38,10 @@
       </ul>
       <hr/>
       <ul id="events"></ul>
-      <script src="../dist/btm-slider.js"></script>
+      <script src="../dist/jgb-slider.js"></script>
       <script>
           var events = document.getElementById('events');
-          var el = new BTMSlider({
+          var el = jgbslider({
               selector: '.example-slider',
               slideDuration: 450,
               autoplay: true,
@@ -62,8 +62,6 @@
                   events.innerHTML += '<li>After slide event</li>';
               }
           });
-
-          console.log(el)
 
           var stopButton = document.getElementById('stop');
           stopButton.addEventListener('click', function() {

@@ -31,7 +31,7 @@ export default class {
         this.listenToErrors();
         this.listen();
 
-        InitHandler(this.store, this.bus, this.dom.slides.length);
+        InitHandler(this.store, this.bus, this.dom.slides.length, this.options.slideDuration);
 
         this.uiEvents();
     }

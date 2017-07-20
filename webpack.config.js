@@ -4,6 +4,34 @@ const WriteFilePlugin = require('write-file-webpack-plugin');
 const env = require('yargs').argv.env;
 const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
 
+const exampleStyle = {
+    plugins: [
+        new ExtractTextPlugin({
+            filename: '[name].css'
+        })
+    ],
+    entry: {
+        'example': './src/scss/example.scss'
+    },
+    output: {
+        filename: '[name].css',
+        path: path.resolve(__dirname, 'dist/'),
+        publicPath: '/dist'
+    },
+    module: {
+        rules: [
+             {
+                  test: /\.scss$/,
+                  use: ExtractTextPlugin.extract({
+                      fallback: 'style-loader',
+                      //resolve-url-loader may be chained before sass-loader if necessary
+                      use: ['css-loader', 'sass-loader']
+                  })
+             }
+        ]
+    }
+}
+
 const scriptConfig = {
     plugins: [
         new WriteFilePlugin()
@@ -45,10 +73,10 @@ const styleConfig = {
 var script = Object.assign(scriptConfig, {
     entry: './src/js/index.js',
     output: {
-        filename: (env === 'production') ? 'btm-slider.min.js' : 'btm-slider.js',
+        filename: (env === 'production') ? 'jgb-slider.min.js' : 'jgb-slider.js',
         path: path.resolve(__dirname, 'dist/'),
         publicPath: '/dist',
-        library: 'BTMSlider',
+        library: 'jgbslider',
         libraryTarget: 'umd'
     }
 });
@@ -69,7 +97,7 @@ if (env === 'production') {
 
 var style = Object.assign(styleConfig, {
     entry: {
-        'btm-slider': './src/scss/js-slider.scss'
+        'jgb-slider': './src/scss/js-slider.scss'
     },
     output: {
         filename: (env === 'production') ? '[name].min.css' : '[name].css',
@@ -82,8 +110,6 @@ style.plugins.push(new ExtractTextPlugin({
     filename: (env === 'production') ? '[name].min.css' : '[name].css'
 }));
 
-if (env !== 'production') {
-    style.entry.example = './src/scss/example.scss';
-}
+let configs = [script, style, exampleStyle];
 
-module.exports = [script, style]
+module.exports = configs;

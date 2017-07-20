@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["BTMSlider"] = factory();
+		exports["jgbslider"] = factory();
 	else
-		root["BTMSlider"] = factory();
+		root["jgbslider"] = factory();
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -2349,7 +2349,7 @@ var _GetCurrentSlide = __webpack_require__(13);
 
 var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
 
-var _TransitionToFailedException = __webpack_require__(107);
+var _TransitionToFailedException = __webpack_require__(97);
 
 var _TransitionToFailedException2 = _interopRequireDefault(_TransitionToFailedException);
 
@@ -9439,7 +9439,7 @@ var _InitHandler = __webpack_require__(92);
 
 var _InitHandler2 = _interopRequireDefault(_InitHandler);
 
-var _TransitionToNextSlideHandler = __webpack_require__(96);
+var _TransitionToNextSlideHandler = __webpack_require__(95);
 
 var _TransitionToNextSlideHandler2 = _interopRequireDefault(_TransitionToNextSlideHandler);
 
@@ -9498,7 +9498,7 @@ var _class = function () {
         this.listenToErrors();
         this.listen();
 
-        (0, _InitHandler2.default)(this.store, this.bus, this.dom.slides.length);
+        (0, _InitHandler2.default)(this.store, this.bus, this.dom.slides.length, this.options.slideDuration);
 
         this.uiEvents();
     }
@@ -9633,16 +9633,54 @@ exports.default = function (numberOfSlides, slideDuration) {
     };
 };
 
-var _InitiationFailedException = __webpack_require__(106);
+var _InitiationFailedException = __webpack_require__(94);
 
 var _InitiationFailedException2 = _interopRequireDefault(_InitiationFailedException);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 94 */,
-/* 95 */,
-/* 96 */
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _Exception2 = __webpack_require__(38);
+
+var _Exception3 = _interopRequireDefault(_Exception2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var InitiationFailedException = function (_Exception) {
+    _inherits(InitiationFailedException, _Exception);
+
+    function InitiationFailedException(message) {
+        _classCallCheck(this, InitiationFailedException);
+
+        var _this = _possibleConstructorReturn(this, (InitiationFailedException.__proto__ || Object.getPrototypeOf(InitiationFailedException)).call(this, message));
+
+        _this.name = 'InitiationFailedException';
+        return _this;
+    }
+
+    return InitiationFailedException;
+}(_Exception3.default);
+
+exports.default = InitiationFailedException;
+
+/***/ }),
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9664,7 +9702,7 @@ exports.default = function (store, bus) {
     }
 };
 
-var _TransitionToNextSlide = __webpack_require__(97);
+var _TransitionToNextSlide = __webpack_require__(96);
 
 var _TransitionToNextSlide2 = _interopRequireDefault(_TransitionToNextSlide);
 
@@ -9675,7 +9713,7 @@ var _CompleteTransitionHandler2 = _interopRequireDefault(_CompleteTransitionHand
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 97 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9698,6 +9736,46 @@ var _TransitionTo = __webpack_require__(20);
 var _TransitionTo2 = _interopRequireDefault(_TransitionTo);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 97 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _Exception2 = __webpack_require__(38);
+
+var _Exception3 = _interopRequireDefault(_Exception2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TransitionToFailedException = function (_Exception) {
+    _inherits(TransitionToFailedException, _Exception);
+
+    function TransitionToFailedException(message) {
+        _classCallCheck(this, TransitionToFailedException);
+
+        var _this = _possibleConstructorReturn(this, (TransitionToFailedException.__proto__ || Object.getPrototypeOf(TransitionToFailedException)).call(this, message));
+
+        _this.name = 'TransitionToFailedException';
+        return _this;
+    }
+
+    return TransitionToFailedException;
+}(_Exception3.default);
+
+exports.default = TransitionToFailedException;
 
 /***/ }),
 /* 98 */
@@ -9955,86 +10033,6 @@ var _GetCurrentSlide = __webpack_require__(13);
 var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/***/ }),
-/* 106 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _Exception2 = __webpack_require__(38);
-
-var _Exception3 = _interopRequireDefault(_Exception2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var InitiationFailedException = function (_Exception) {
-    _inherits(InitiationFailedException, _Exception);
-
-    function InitiationFailedException(message) {
-        _classCallCheck(this, InitiationFailedException);
-
-        var _this = _possibleConstructorReturn(this, (InitiationFailedException.__proto__ || Object.getPrototypeOf(InitiationFailedException)).call(this, message));
-
-        _this.name = 'InitiationFailedException';
-        return _this;
-    }
-
-    return InitiationFailedException;
-}(_Exception3.default);
-
-exports.default = InitiationFailedException;
-
-/***/ }),
-/* 107 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _Exception2 = __webpack_require__(38);
-
-var _Exception3 = _interopRequireDefault(_Exception2);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var TransitionToFailedException = function (_Exception) {
-    _inherits(TransitionToFailedException, _Exception);
-
-    function TransitionToFailedException(message) {
-        _classCallCheck(this, TransitionToFailedException);
-
-        var _this = _possibleConstructorReturn(this, (TransitionToFailedException.__proto__ || Object.getPrototypeOf(TransitionToFailedException)).call(this, message));
-
-        _this.name = 'TransitionToFailedException';
-        return _this;
-    }
-
-    return TransitionToFailedException;
-}(_Exception3.default);
-
-exports.default = TransitionToFailedException;
 
 /***/ })
 /******/ ]);
