@@ -1,11 +1,10 @@
-var assert = require('assert');
+var chai = require('chai');
+var assert = chai.assert;
 
 import * as actions from '../src/js/Actions';
 import GetNextSlide from '../src/js/ActionHelper/GetNextSlide.js';
 import GetPreviousSlide from '../src/js/ActionHelper/GetPreviousSlide.js';
 import GetCurrentSlide from '../src/js/ActionHelper/GetCurrentSlide.js';
-
-console.log(actions)
 
 describe('Slide Instance:', function() {
     describe('Initiation', function() {
@@ -32,13 +31,13 @@ describe('Slide Instance:', function() {
         it('should not initiate if total number of slides are 0', function() {
             assert.throws(function() {
                 let slider = actions.Init(0);
-            }, Error);
+            }, /number of slides must >= 1/);
         });
 
         it('should not initiate if total number of slides are not provided', function() {
             assert.throws(function() {
                 let slider = actions.Init();
-            });
+            }, /numberOfSlides is required/);
         });
     });
 

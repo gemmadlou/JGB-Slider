@@ -1,11 +1,13 @@
+import InitiationFailedException from '../Exceptions/InitiationFailedException.js';
+
 export default function (numberOfSlides, slideDuration) {
 
     if (numberOfSlides === undefined) {
-        throw new Error('Total number of slides must be provided');
+        throw new InitiationFailedException('numberOfSlides is required');
     }
 
     if (numberOfSlides === 0) {
-        throw new Error('Total slides cannot be 0');
+        throw new InitiationFailedException('number of slides must >= 1');
     }
 
     return {

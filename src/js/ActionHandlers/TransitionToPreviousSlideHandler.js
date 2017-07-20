@@ -9,6 +9,6 @@ export default function(store, bus) {
             CompleteTransitionHandler(store.get(), bus);
         }, store.get().slideDuration);
     } catch (err) {
-        bus.emit('TransitionToPreviousSlideFailed', err);
+        bus.emit(err.name, err);
     }
 }

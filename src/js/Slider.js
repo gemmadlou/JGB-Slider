@@ -46,21 +46,24 @@ export default class {
     }
 
     listenToErrors() {
-        this.bus.on('InitiationFailed', (err) => {
+        this.bus.on('InitiationFailedException', (err) => {
+            console.log('init failed', err.name, err.message, err.stack);
+        });
+        this.bus.on('TransitionToNextSlideFailedException', (err) => {
+            console.log(err, 'error', this.store);
+        });
+        this.bus.on('TransitionToPreviousSlideFailedException', (err) => {
+            console.log(err, 'error', this.store);
+        });
+        this.bus.on('TransitionToFailedException', (err) => {
+            console.log(err, 'error', this.store);
+        });
+        this.bus.on('TransitionToFailedException', (err) => {
             console.log(err, 'error');
         });
-        this.bus.on('TransitionToNextSlideFailed', (err) => {
-            console.log(err, 'error', this.store);
-        });
-        this.bus.on('TransitionToPreviousSlideFailed', (err) => {
-            console.log(err, 'error', this.store);
-        });
-        this.bus.on('TransitionToFailed', (err) => {
-            console.log(err, 'error', this.store);
-        });
-        this.bus.on('TransitionFailed', (err) => {
+        this.bus.on('CompleteTransitionFailedException', (err) => {
             console.log(err, 'error');
-        });
+        })
     }
 
     listen() {
