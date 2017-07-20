@@ -2,11 +2,15 @@ import InitHandler from './ActionHandlers/InitHandler.js';
 import TransitionToNextSlideHandler from './ActionHandlers/TransitionToNextSlideHandler.js';
 import TransitionToPreviousSlideHandler from './ActionHandlers/TransitionToPreviousSlideHandler.js';
 import TransitionToHandler from './ActionHandlers/TransitionToHandler.js';
-import Bus from './Helpers/Bus.js';
-import Store from './Helpers/Store.js';
+import StartAutoplayHandler from './ActionHandlers/StartAutoplayHandler.js';
+import StopAutoplayHandler from './ActionHandlers/StopAutoplayHandler.js';
+
 import GetCurrentSlide from './ActionHelper/GetCurrentSlide.js';
 import GetNextSlide from './ActionHelper/GetNextSlide.js';
 import GetSliderPositionAsPercentage from './ActionHelper/GetSliderPositionAsPercentage.js';
+
+import Bus from './Helpers/Bus.js';
+import Store from './Helpers/Store.js';
 
 export default class {
 
@@ -94,6 +98,14 @@ export default class {
 
     goTo(slideNumber) {
         TransitionToHandler(this.store, this.bus, slideNumber);
+    }
+
+    autoplay() {
+        StartAutoplayHandler(this.store, this.bus);
+    }
+
+    stopAutoplay() {
+        StopAutoplayHandler(this.store, this.bus);
     }
 
 }

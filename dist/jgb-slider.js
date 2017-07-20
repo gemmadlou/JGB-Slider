@@ -9456,13 +9456,13 @@ var _TransitionToHandler = __webpack_require__(102);
 
 var _TransitionToHandler2 = _interopRequireDefault(_TransitionToHandler);
 
-var _Bus = __webpack_require__(103);
+var _StartAutoplayHandler = __webpack_require__(106);
 
-var _Bus2 = _interopRequireDefault(_Bus);
+var _StartAutoplayHandler2 = _interopRequireDefault(_StartAutoplayHandler);
 
-var _Store = __webpack_require__(104);
+var _StopAutoplayHandler = __webpack_require__(109);
 
-var _Store2 = _interopRequireDefault(_Store);
+var _StopAutoplayHandler2 = _interopRequireDefault(_StopAutoplayHandler);
 
 var _GetCurrentSlide = __webpack_require__(13);
 
@@ -9475,6 +9475,14 @@ var _GetNextSlide2 = _interopRequireDefault(_GetNextSlide);
 var _GetSliderPositionAsPercentage = __webpack_require__(105);
 
 var _GetSliderPositionAsPercentage2 = _interopRequireDefault(_GetSliderPositionAsPercentage);
+
+var _Bus = __webpack_require__(103);
+
+var _Bus2 = _interopRequireDefault(_Bus);
+
+var _Store = __webpack_require__(104);
+
+var _Store2 = _interopRequireDefault(_Store);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9578,6 +9586,16 @@ var _class = function () {
         value: function goTo(slideNumber) {
             (0, _TransitionToHandler2.default)(this.store, this.bus, slideNumber);
         }
+    }, {
+        key: 'autoplay',
+        value: function autoplay() {
+            (0, _StartAutoplayHandler2.default)(this.store, this.bus);
+        }
+    }, {
+        key: 'stopAutoplay',
+        value: function stopAutoplay() {
+            (0, _StopAutoplayHandler2.default)(this.store, this.bus);
+        }
     }]);
 
     return _class;
@@ -9636,7 +9654,8 @@ exports.default = function (numberOfSlides, slideDuration) {
         currentSlide: 1,
         numberOfSlides: numberOfSlides,
         transitionTo: undefined,
-        slideDuration: slideDuration || 1200
+        slideDuration: slideDuration || 1200,
+        autoplay: false
     };
 };
 
@@ -10040,6 +10059,224 @@ var _GetCurrentSlide = __webpack_require__(13);
 var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 106 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _StartAutoplay = __webpack_require__(107);
+
+var _StartAutoplay2 = _interopRequireDefault(_StartAutoplay);
+
+var _TransitionToNextSlideHandler = __webpack_require__(95);
+
+var _TransitionToNextSlideHandler2 = _interopRequireDefault(_TransitionToNextSlideHandler);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var runAutoplay = function runAutoplay(store, bus) {
+    console.log(store.get());
+    if (store.get().autoplay) {
+        setTimeout(function () {
+            if (store.get().autoplay) {
+                (0, _TransitionToNextSlideHandler2.default)(store, bus);
+                requestAnimationFrame(function () {
+                    runAutoplay(store, bus);
+                });
+            }
+        }, 4000);
+    }
+};
+
+var StartAutoplayHandler = function StartAutoplayHandler(store, bus) {
+    try {
+        store.update(new _StartAutoplay2.default(store.get()));
+        bus.emit('AutoplayStarted');
+        console.log(store.get());
+        if (!store.get().autoplay) {
+            runAutoplay(store, bus);
+        }
+    } catch (err) {
+        bus.emit(err.name, err);
+    }
+};
+
+exports.default = StartAutoplayHandler;
+
+/***/ }),
+/* 107 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (State) {
+
+    if (State === undefined) {
+        throw new _StartAutoplayFailedException2.default('Slider state is required');
+    }
+    var state = (0, _Copy2.default)(State);
+    state.autoplay = true;
+    return state;
+};
+
+var _Copy = __webpack_require__(40);
+
+var _Copy2 = _interopRequireDefault(_Copy);
+
+var _StartAutoplayFailedException = __webpack_require__(108);
+
+var _StartAutoplayFailedException2 = _interopRequireDefault(_StartAutoplayFailedException);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 108 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _Exception2 = __webpack_require__(38);
+
+var _Exception3 = _interopRequireDefault(_Exception2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var StartAutoplayFailedException = function (_Exception) {
+    _inherits(StartAutoplayFailedException, _Exception);
+
+    function StartAutoplayFailedException(message) {
+        _classCallCheck(this, StartAutoplayFailedException);
+
+        var _this = _possibleConstructorReturn(this, (StartAutoplayFailedException.__proto__ || Object.getPrototypeOf(StartAutoplayFailedException)).call(this, message));
+
+        _this.name = 'StartAutoplayFailedException';
+        return _this;
+    }
+
+    return StartAutoplayFailedException;
+}(_Exception3.default);
+
+exports.default = StartAutoplayFailedException;
+
+/***/ }),
+/* 109 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (store, bus) {
+    try {
+        store.update(new _StopAutoplay2.default(store.get()));
+        bus.emit('StopAutoplay');
+    } catch (err) {
+        bus.emit(err.name, err);
+    }
+};
+
+var _StopAutoplay = __webpack_require__(110);
+
+var _StopAutoplay2 = _interopRequireDefault(_StopAutoplay);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 110 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (State) {
+
+    if (State === undefined) {
+        throw new _StopAutoplayFailedException2.default('Slider state is required');
+    }
+    var state = (0, _Copy2.default)(State);
+    state.autoplay = false;
+    return state;
+};
+
+var _Copy = __webpack_require__(40);
+
+var _Copy2 = _interopRequireDefault(_Copy);
+
+var _StopAutoplayFailedException = __webpack_require__(111);
+
+var _StopAutoplayFailedException2 = _interopRequireDefault(_StopAutoplayFailedException);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 111 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _Exception2 = __webpack_require__(38);
+
+var _Exception3 = _interopRequireDefault(_Exception2);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var StopAutoplayFailedException = function (_Exception) {
+    _inherits(StopAutoplayFailedException, _Exception);
+
+    function StopAutoplayFailedException(message) {
+        _classCallCheck(this, StopAutoplayFailedException);
+
+        var _this = _possibleConstructorReturn(this, (StopAutoplayFailedException.__proto__ || Object.getPrototypeOf(StopAutoplayFailedException)).call(this, message));
+
+        _this.name = 'StopAutoplayFailedException';
+        return _this;
+    }
+
+    return StopAutoplayFailedException;
+}(_Exception3.default);
+
+exports.default = StopAutoplayFailedException;
 
 /***/ })
 /******/ ]);

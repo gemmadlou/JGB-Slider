@@ -14,6 +14,7 @@ export default function (numberOfSlides, slideDuration) {
         currentSlide: 1,
         numberOfSlides: numberOfSlides,
         transitionTo: undefined,
-        slideDuration: slideDuration || 1200
+        slideDuration: slideDuration || 1200,
+        autoplay: false
     }
 }
