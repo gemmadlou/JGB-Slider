@@ -1,15 +1,16 @@
 {
-  "name": "slider",
+  "name": "jgb-slider",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Vanilla JS Slider",
+  "main": "./dist/btm-slider.min.js",
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --compilers js:babel-core/register test",
     "build": "./node_modules/.bin/webpack --config webpack.config.js --optimize-minimize --env production",
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --progress --watch --env dev",
     "server": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev"
   },
-  "author": "Gemma Black",
+  "repository": "https://github.com/gemmadlou/JGB-Slider",
+  "author": "Gemma Black <gblackuk@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.25.0",
