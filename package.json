@@ -1,6 +1,6 @@
 {
-  "name": "slider",
-  "version": "1.0.0",
+  "name": "jgb-slider",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -9,7 +9,8 @@
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --progress --watch --env dev",
     "server": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev"
   },
-  "author": "Gemma Black",
+  "repository": "https://github.com/gemmadlou/JGB-Slider/releases",
+  "author": "Gemma Black <gblackuk@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.25.0",
