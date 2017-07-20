@@ -57,6 +57,12 @@ describe('Slide Instance:', function() {
             }, /Transition slide must be provided/);
         });
 
+        it('should set the transition time', function() {
+            let slider = actions.Init(2);
+            slider = actions.TransitionTo(slider, 2);
+            assert.equal(slider.transitionStartedAt, Date.now());
+        });
+
         it('should TransitionTo slide provided', function() {
             let slider = actions.Init(2);
             slider = actions.TransitionTo(slider, 2);
