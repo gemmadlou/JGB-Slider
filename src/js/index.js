@@ -13,7 +13,6 @@ module.exports = function(options) {
         /**
          * @todo Check slider has been initliazed already
          */
-
         if (options.selector.charAt(0) === '.' || options.selector.charAt(0) === '#') {
             options.blockname = options.selector.slice(1);
             options.el = element;
@@ -22,5 +21,4 @@ module.exports = function(options) {
 
     });
 
-    return sliders;
 }

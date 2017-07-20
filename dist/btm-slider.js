@@ -9268,15 +9268,12 @@ module.exports = function (options) {
         /**
          * @todo Check slider has been initliazed already
          */
-
         if (options.selector.charAt(0) === '.' || options.selector.charAt(0) === '#') {
             options.blockname = options.selector.slice(1);
             options.el = element;
             element.slider = new _Slider2.default(options);
         }
     });
-
-    return sliders;
 };
 
 /***/ }),
@@ -9533,12 +9530,12 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 exports.default = function (Slide) {
-    return (0, _TransitionTo2.default)(Slide, (0, _getNextSlide2.default)(Slide));
+    return (0, _TransitionTo2.default)(Slide, (0, _GetNextSlide2.default)(Slide));
 };
 
-var _getNextSlide = __webpack_require__(92);
+var _GetNextSlide = __webpack_require__(98);
 
-var _getNextSlide2 = _interopRequireDefault(_getNextSlide);
+var _GetNextSlide2 = _interopRequireDefault(_GetNextSlide);
 
 var _TransitionTo = __webpack_require__(93);
 
@@ -9547,31 +9544,7 @@ var _TransitionTo2 = _interopRequireDefault(_TransitionTo);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 92 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-exports.default = function (Slide) {
-    if (Slide === undefined) {
-        throw new Error('Getting next slide requires state');
-    }
-    var currentSlide = (0, _GetCurrentSlide2.default)(Slide);
-    return currentSlide === Slide.numberOfSlides ? 1 : currentSlide + 1;
-};
-
-var _GetCurrentSlide = __webpack_require__(13);
-
-var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/***/ }),
+/* 92 */,
 /* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
