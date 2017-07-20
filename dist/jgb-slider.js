@@ -9395,6 +9395,8 @@ function isUndefined(arg) {
 "use strict";
 
 
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
 var _Slider = __webpack_require__(91);
 
 var _Slider2 = _interopRequireDefault(_Slider);
@@ -9403,7 +9405,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 module.exports = function (options) {
 
-    options = options || {};
+    options = options && (typeof options === 'undefined' ? 'undefined' : _typeof(options)) === 'object' ? options : {};
 
     options.selector = options.selector === undefined ? '.js-slider' : options.selector;
 
@@ -9411,9 +9413,12 @@ module.exports = function (options) {
 
     elements.forEach(function (element) {
 
-        /**
-         * @todo Check slider has been initliazed already
-         */
+        // Already instantiated
+        if (element.slider) {
+            return;
+        }
+
+        // Instantiate if has class or id
         if (options.selector.charAt(0) === '.' || options.selector.charAt(0) === '#') {
             options.blockname = options.selector.slice(1);
             options.el = element;
