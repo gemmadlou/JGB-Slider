@@ -12,7 +12,8 @@ First set up your javascript
 or
 
 ```
-import Slider from 'BTMSlider';
+import Slider from 'jgb-slider';
+let Slider = require('jgb-slider');
 
 ```
 
@@ -21,7 +22,7 @@ Import the sass file
 ```
 @import .js-slider.scss;
 
-<link href="../dist/btm-slider.min.css" rel="stylesheet" />
+<link href="./node_modules/jgb-slider/dist/btm-slider.min.css" rel="stylesheet" />
 
 ```
 
