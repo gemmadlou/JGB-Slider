@@ -9587,7 +9587,6 @@ exports.default = function (Slide, slideToGet) {
     slide.transitionTo = slideToGet;
     slide.currentSlide = undefined;
     slide.transitionStartedAt = Date.now();
-    console.log(slide.transitionStartedAt);
 
     return slide;
 };

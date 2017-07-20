@@ -184,17 +184,23 @@ describe('Slide Instance:', function() {
                 slider = actions.CompleteTransition();
             }, /state is undefined/);
         });
-        it('should set currentSlide', function() {
+        it('should set currentSlide', function(done) {
             let slider = actions.Init(2);
             slider = actions.TransitionToNextSlide(slider);
-            slider = actions.CompleteTransition(slider);
-            assert.equal(2, slider.currentSlide);
+            setTimeout(function() {
+                slider = actions.CompleteTransition(slider);
+                assert.equal(2, slider.currentSlide);
+                done();
+            }, slider.slideDuration)
         });
-        it('should set TransitionTo as defined', function() {
+        it('should set TransitionTo as defined', function(done) {
             let slider = actions.Init(2);
             slider = actions.TransitionToNextSlide(slider);
-            slider = actions.CompleteTransition(slider);
-            assert.equal(undefined, slider.transitionTo);
+            setTimeout(function() {
+                slider = actions.CompleteTransition(slider);
+                assert.equal(undefined, slider.transitionTo);
+                done();
+            }, slider.slideDuration)
         });
     });
 
