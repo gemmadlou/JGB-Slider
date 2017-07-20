@@ -68,7 +68,7 @@ export default class {
 
     listen() {
         this.bus.on('Initiated', (state) => {
-
+            this.dom.slider.style.transitionDuration = this.store.get().slideDuration + 'ms';
         });
         this.bus.on('TransitionToNextSlideStarted', (state) => {
             this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());

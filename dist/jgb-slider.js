@@ -9544,7 +9544,9 @@ var _class = function () {
         value: function listen() {
             var _this3 = this;
 
-            this.bus.on('Initiated', function (state) {});
+            this.bus.on('Initiated', function (state) {
+                _this3.dom.slider.style.transitionDuration = _this3.store.get().slideDuration + 'ms';
+            });
             this.bus.on('TransitionToNextSlideStarted', function (state) {
                 _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
             });
@@ -9589,9 +9591,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-exports.default = function (store, bus, numberOfSlides) {
+exports.default = function (store, bus, numberOfSlides, slideDuration) {
     try {
-        store.update(new _Init2.default(numberOfSlides));
+        store.update(new _Init2.default(numberOfSlides, slideDuration));
         bus.emit('Initiated');
     } catch (err) {
         bus.emit(err.name, err);

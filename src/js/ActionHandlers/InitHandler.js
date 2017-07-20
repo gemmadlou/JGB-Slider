@@ -1,8 +1,8 @@
 import Init from '../Actions/Init.js';
 
-export default function(store, bus, numberOfSlides) {
+export default function(store, bus, numberOfSlides, slideDuration) {
     try {
-        store.update(new Init(numberOfSlides));
+        store.update(new Init(numberOfSlides, slideDuration));
         bus.emit('Initiated');
     } catch (err) {
         bus.emit(err.name, err);
