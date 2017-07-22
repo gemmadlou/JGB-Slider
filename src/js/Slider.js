@@ -99,23 +99,8 @@ export default class {
 
     listenToErrors() {
         this.bus.on('InitiationFailedException', (err) => {
-            console.log('init failed', err.name, err.message, err.stack);
+            console.log('There was a problem initializing the slider', err.name, err.message, err.stack);
         });
-        this.bus.on('TransitionToNextSlideFailedException', (err) => {
-            console.log(err, 'error', this.store);
-        });
-        this.bus.on('TransitionToPreviousSlideFailedException', (err) => {
-            console.log(err, 'error', this.store);
-        });
-        this.bus.on('TransitionToFailedException', (err) => {
-            console.log(err, 'error', this.store);
-        });
-        this.bus.on('TransitionToFailedException', (err) => {
-            console.log(err, 'error');
-        });
-        this.bus.on('CompleteTransitionFailedException', (err) => {
-            console.log(err, 'error');
-        })
     }
 
     listen() {

@@ -9612,56 +9612,39 @@ var _class = function () {
     }, {
         key: 'listenToErrors',
         value: function listenToErrors() {
-            var _this3 = this;
-
             this.bus.on('InitiationFailedException', function (err) {
-                console.log('init failed', err.name, err.message, err.stack);
-            });
-            this.bus.on('TransitionToNextSlideFailedException', function (err) {
-                console.log(err, 'error', _this3.store);
-            });
-            this.bus.on('TransitionToPreviousSlideFailedException', function (err) {
-                console.log(err, 'error', _this3.store);
-            });
-            this.bus.on('TransitionToFailedException', function (err) {
-                console.log(err, 'error', _this3.store);
-            });
-            this.bus.on('TransitionToFailedException', function (err) {
-                console.log(err, 'error');
-            });
-            this.bus.on('CompleteTransitionFailedException', function (err) {
-                console.log(err, 'error');
+                console.log('There was a problem initializing the slider', err.name, err.message, err.stack);
             });
         }
     }, {
         key: 'listen',
         value: function listen() {
-            var _this4 = this;
+            var _this3 = this;
 
             this.bus.on('Initiated', function (state) {
-                _this4.dom.slider.style.transitionDuration = _this4.store.get().slideDuration + 'ms';
-                _this4.options.onInit();
+                _this3.dom.slider.style.transitionDuration = _this3.store.get().slideDuration + 'ms';
+                _this3.options.onInit();
             });
             this.bus.on('TransitionToNextSlideStarted', function (state) {
-                _this4.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this4.store.get());
-                _this4.options.beforeSlide();
+                _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
+                _this3.options.beforeSlide();
             });
             this.bus.on('TransitionToPreviousSlideStarted', function (state) {
-                _this4.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this4.store.get());
-                _this4.options.beforeSlide();
+                _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
+                _this3.options.beforeSlide();
             });
             this.bus.on('TransitionToStarted', function (state) {
-                _this4.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this4.store.get());
-                _this4.options.beforeSlide();
+                _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
+                _this3.options.beforeSlide();
             });
             this.bus.on('TransitionCompleted', function (state) {
-                _this4.options.afterSlide();
+                _this3.options.afterSlide();
             });
             this.bus.on('AutoplayStopped', function (state) {
-                _this4.options.onStopAutoplay();
+                _this3.options.onStopAutoplay();
             });
             this.bus.on('AutoplayStarted', function (state) {
-                _this4.options.onStartAutoplay();
+                _this3.options.onStartAutoplay();
             });
         }
     }, {

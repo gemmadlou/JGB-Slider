@@ -32,7 +32,8 @@ const exampleStyle = {
     }
 }
 
-const scriptConfig = {
+var script = {
+    devtool: 'source-map',
     plugins: [
         new WriteFilePlugin()
     ],
@@ -49,37 +50,16 @@ const scriptConfig = {
                  }
              }
         ]
-    }
-};
-
-const styleConfig = {
-    plugins: [
-        new WriteFilePlugin()
-    ],
-    module: {
-        rules: [
-             {
-                  test: /\.scss$/,
-                  use: ExtractTextPlugin.extract({
-                      fallback: 'style-loader',
-                      //resolve-url-loader may be chained before sass-loader if necessary
-                      use: ['css-loader', 'sass-loader']
-                  })
-             }
-        ]
-    }
-};
-
-var script = Object.assign(scriptConfig, {
+    },
     entry: './src/js/index.js',
     output: {
-        filename: (env === 'production') ? 'jgb-slider.min.js' : 'jgb-slider.js',
+        filename: 'jgb-slider.min.js',
         path: path.resolve(__dirname, 'dist/'),
         publicPath: '/dist',
         library: 'jgbslider',
         libraryTarget: 'umd'
     }
-});
+};
 
 if (env === 'production') {
     script.plugins.push(
@@ -95,7 +75,25 @@ if (env === 'production') {
     );
 }
 
-var style = Object.assign(styleConfig, {
+var style = {
+    plugins: [
+        new WriteFilePlugin(),
+        new ExtractTextPlugin({
+            filename: (env === 'production') ? '[name].min.css' : '[name].css'
+        })
+    ],
+    module: {
+        rules: [
+             {
+                  test: /\.scss$/,
+                  use: ExtractTextPlugin.extract({
+                      fallback: 'style-loader',
+                      //resolve-url-loader may be chained before sass-loader if necessary
+                      use: ['css-loader', 'sass-loader']
+                  })
+             }
+        ]
+    },
     entry: {
         'jgb-slider': './src/scss/js-slider.scss'
     },
@@ -104,11 +102,7 @@ var style = Object.assign(styleConfig, {
         path: path.resolve(__dirname, 'dist/'),
         publicPath: '/dist'
     }
-});
-
-style.plugins.push(new ExtractTextPlugin({
-    filename: (env === 'production') ? '[name].min.css' : '[name].css'
-}));
+};
 
 let configs = [script, style, exampleStyle];
 

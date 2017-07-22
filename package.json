@@ -3,8 +3,10 @@
   "version": "0.0.3",
   "description": "",
   "main": "./dist/btm-slider.min.js",
-  "repository": "https://github.com/gemmadlou/JGB-Slider",
-  "engines" : { "node" : ">=6.0" },
+  "repository": "https://github.com/gemmadlou/JGB-Slider/releases",
+  "engines": {
+    "node": ">=6.0"
+  },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha --recursive --require babel-polyfill --compilers js:babel-register test",
     "build": "./node_modules/.bin/webpack --config webpack.config.js --optimize-minimize --env production",
@@ -12,7 +14,6 @@
     "server": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev",
     "server:cloud9": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev --host $IP --port $PORT --public $C9_HOSTNAME:$PORT"
   },
-  "repository": "https://github.com/gemmadlou/JGB-Slider/releases",
   "author": "Gemma Black <gblackuk@gmail.com>",
   "license": "ISC",
   "devDependencies": {
