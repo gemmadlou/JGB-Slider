@@ -7,7 +7,8 @@
     "test": "./node_modules/mocha/bin/mocha --recursive --require babel-polyfill --compilers js:babel-register test",
     "build": "./node_modules/.bin/webpack --config webpack.config.js --optimize-minimize --env production",
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --progress --watch --env dev",
-    "server": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev"
+    "server": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev",
+    "server:cloud9": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev --host $IP --port $PORT --public $C9_HOSTNAME:$PORT"
   },
   "repository": "https://github.com/gemmadlou/JGB-Slider",
   "author": "Gemma Black <gblackuk@gmail.com>",
@@ -34,6 +35,7 @@
     "uglifyjs-webpack-plugin": "^0.4.6",
     "webpack": "^3.0.0",
     "webpack-dev-server": "^2.5.0",
-    "write-file-webpack-plugin": "^4.1.0"
+    "write-file-webpack-plugin": "^4.1.0",
+    "yargs": "^8.0.2"
   }
 }

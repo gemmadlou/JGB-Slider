@@ -62,15 +62,17 @@
                   events.innerHTML += '<li>After slide event</li>';
               }
           });
+          
+          var elem = document.querySelector('.example-slider');
 
           var stopButton = document.getElementById('stop');
           stopButton.addEventListener('click', function() {
-             el.sliders[0].disableAutoplay();
+             elem.slider.stopAutoplay();
           });
 
           var startButton = document.getElementById('start');
           startButton.addEventListener('click', function() {
-             el.sliders[0].startAutoplay();
+             elem.slider.autoplay();
           });
       </script>
   </body>

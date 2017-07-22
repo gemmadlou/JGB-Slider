@@ -2,7 +2,6 @@ import StartAutoplay from '../Actions/StartAutoplay.js';
 import TransitionToNextSlideHandler from './TransitionToNextSlideHandler.js';
 
 let runAutoplay = function(store, bus) {
-    console.log(store.get())
     if (store.get().autoplay) {
         setTimeout(function() {
             if (store.get().autoplay) {
@@ -11,18 +10,18 @@ let runAutoplay = function(store, bus) {
                     runAutoplay(store, bus)
                 });
             }
-        }, 4000)
+        }, store.get().autoplaySpeed)
     }
 }
 
 let StartAutoplayHandler = function(store, bus) {
     try {
+        if (store.get().autoplay) {
+           return;
+        }
         store.update(new StartAutoplay(store.get()));
         bus.emit('AutoplayStarted');
-        console.log(store.get())
-        if (!store.get().autoplay) {
-            runAutoplay(store, bus);
-        }
+        runAutoplay(store, bus);
     } catch (err) {
         bus.emit(err.name, err);
     }
