@@ -3,12 +3,10 @@
     <title>Getting Started</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../dist/example.css" rel="stylesheet" />
-    <link href="../dist/btm-slider.css" rel="stylesheet" />
+    <link href="../dist/jgb-slider.css" rel="stylesheet" />
   </head>
   <body>
       <div class="example-slider">
-          <span class="example-slider__prev-slide"></span>
-          <span class="example-slider__next-slide"></span>
           <ol class="example-slider__slider">
               <li class="example-slider__slide">
                   <img src="http://unsplash.it/1200/500" />
@@ -38,19 +36,16 @@
       </ul>
       <hr/>
       <ul id="events"></ul>
-      <script src="../dist/btm-slider.js"></script>
+      <script src="../dist/jgb-slider.js"></script>
       <script>
           var events = document.getElementById('events');
-          var el = new BTMSlider({
+          var el = jgbslider({
               selector: '.example-slider',
               slideDuration: 450,
               autoplay: true,
               autoplaySpeed: 2500,
               onStartAutoplay: function() {
                   events.innerHTML += '<li>Autoplay started</li>';
-              },
-              onPauseAutoplay: function() {
-                  events.innerHTML += '<li>Autoplay paused</li>';
               },
               onStopAutoplay: function() {
                   events.innerHTML += '<li>Autoplay stopped</li>';
@@ -62,17 +57,17 @@
                   events.innerHTML += '<li>After slide event</li>';
               }
           });
-
-          console.log(el)
+          
+          var elem = document.querySelector('.example-slider');
 
           var stopButton = document.getElementById('stop');
           stopButton.addEventListener('click', function() {
-             el.sliders[0].disableAutoplay();
+             elem.slider.stopAutoplay();
           });
 
           var startButton = document.getElementById('start');
           startButton.addEventListener('click', function() {
-             el.sliders[0].startAutoplay();
+             elem.slider.autoplay();
           });
       </script>
   </body>
