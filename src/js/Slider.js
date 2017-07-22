@@ -15,8 +15,16 @@ import Store from './Helpers/Store.js';
 export default class {
 
     constructor(userSettings) {
+        
+        let defaults = {
+          onInit: function() {},
+          beforeSlide: function() {},
+          afterSlide: function() {},
+          onStartAutoplay: function() {},
+          onStopAutoplay: function() {}
+        };
 
-        this.options = Object.assign({}, userSettings);
+        this.options = Object.assign({}, defaults, userSettings);
 
         try {
             this.dom = {};
@@ -34,13 +42,18 @@ export default class {
 
         this.listenToErrors();
         this.listen();
+        this.listenToUiEvents();
 
-        InitHandler(this.store, this.bus, this.dom.slides.length, this.options.slideDuration);
-
-        this.uiEvents();
+        InitHandler(
+            this.store, 
+            this.bus, 
+            this.dom.slides.length, 
+            this.options.slideDuration,
+            this.options.autoplaySpeed
+        );
     }
 
-    uiEvents() {
+    listenToUiEvents() {
         this.dom.next.addEventListener('click', () => {
             this.next();
         });
@@ -73,18 +86,28 @@ export default class {
     listen() {
         this.bus.on('Initiated', (state) => {
             this.dom.slider.style.transitionDuration = this.store.get().slideDuration + 'ms';
+            this.options.onInit();
         });
         this.bus.on('TransitionToNextSlideStarted', (state) => {
             this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());
+            this.options.beforeSlide();
         });
         this.bus.on('TransitionToPreviousSlideStarted', (state) => {
             this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());
+            this.options.beforeSlide();
         });
         this.bus.on('TransitionToStarted', (state) => {
             this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());
+            this.options.beforeSlide();
         });
         this.bus.on('TransitionCompleted', (state) => {
-
+            this.options.afterSlide();
+        });
+        this.bus.on('AutoplayStopped', (state) => {
+            this.options.onStopAutoplay(); 
+        });
+        this.bus.on('AutoplayStarted', (state) => {
+            this.options.onStartAutoplay(); 
         });
     }
 

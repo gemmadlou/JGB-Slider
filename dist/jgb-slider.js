@@ -9525,7 +9525,15 @@ var _class = function () {
     function _class(userSettings) {
         _classCallCheck(this, _class);
 
-        this.options = Object.assign({}, userSettings);
+        var defaults = {
+            onInit: function onInit() {},
+            beforeSlide: function beforeSlide() {},
+            afterSlide: function afterSlide() {},
+            onStartAutoplay: function onStartAutoplay() {},
+            onStopAutoplay: function onStopAutoplay() {}
+        };
+
+        this.options = Object.assign({}, defaults, userSettings);
 
         try {
             this.dom = {};
@@ -9543,15 +9551,14 @@ var _class = function () {
 
         this.listenToErrors();
         this.listen();
+        this.listenToUiEvents();
 
-        (0, _InitHandler2.default)(this.store, this.bus, this.dom.slides.length, this.options.slideDuration);
-
-        this.uiEvents();
+        (0, _InitHandler2.default)(this.store, this.bus, this.dom.slides.length, this.options.slideDuration, this.options.autoplaySpeed);
     }
 
     _createClass(_class, [{
-        key: 'uiEvents',
-        value: function uiEvents() {
+        key: 'listenToUiEvents',
+        value: function listenToUiEvents() {
             var _this = this;
 
             this.dom.next.addEventListener('click', function () {
@@ -9592,17 +9599,29 @@ var _class = function () {
 
             this.bus.on('Initiated', function (state) {
                 _this3.dom.slider.style.transitionDuration = _this3.store.get().slideDuration + 'ms';
+                _this3.options.onInit();
             });
             this.bus.on('TransitionToNextSlideStarted', function (state) {
                 _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
+                _this3.options.beforeSlide();
             });
             this.bus.on('TransitionToPreviousSlideStarted', function (state) {
                 _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
+                _this3.options.beforeSlide();
             });
             this.bus.on('TransitionToStarted', function (state) {
                 _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
+                _this3.options.beforeSlide();
             });
-            this.bus.on('TransitionCompleted', function (state) {});
+            this.bus.on('TransitionCompleted', function (state) {
+                _this3.options.afterSlide();
+            });
+            this.bus.on('AutoplayStopped', function (state) {
+                _this3.options.onStopAutoplay();
+            });
+            this.bus.on('AutoplayStarted', function (state) {
+                _this3.options.onStartAutoplay();
+            });
         }
     }, {
         key: 'next',
@@ -9647,9 +9666,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-exports.default = function (store, bus, numberOfSlides, slideDuration) {
+exports.default = function (store, bus, numberOfSlides, slideDuration, autoplaySpeed) {
     try {
-        store.update(new _Init2.default(numberOfSlides, slideDuration));
+        store.update(new _Init2.default(numberOfSlides, slideDuration, autoplaySpeed));
         bus.emit('Initiated');
     } catch (err) {
         bus.emit(err.name, err);
@@ -10086,7 +10105,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = function (store, bus) {
     try {
         store.update(new _StopAutoplay2.default(store.get()));
-        bus.emit('StopAutoplay');
+        bus.emit('AutoplayStopped');
     } catch (err) {
         bus.emit(err.name, err);
     }
