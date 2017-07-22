@@ -3,32 +3,41 @@
   "version": "0.0.3",
   "description": "",
   "main": "./dist/btm-slider.min.js",
-  "repository": "https://github.com/gemmadlou/JGB-Slider",
-  "engines" : { "node" : ">=6.0" },
+  "repository": "https://github.com/gemmadlou/JGB-Slider/releases",
+  "engines": {
+    "node": ">=6.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "./node_modules/mocha/bin/mocha --recursive --require babel-polyfill --compilers js:babel-register test",
     "build": "./node_modules/.bin/webpack --config webpack.config.js --optimize-minimize --env production",
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --progress --watch --env dev",
-    "server": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev"
+    "server": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev",
+    "server:cloud9": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev --host $IP --port $PORT --public $C9_HOSTNAME:$PORT"
   },
-  "repository": "https://github.com/gemmadlou/JGB-Slider/releases",
   "author": "Gemma Black <gblackuk@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.5.2",
+    "babel-preset-latest": "^6.24.1",
     "babel-preset-stage-2": "^6.24.1",
+    "babel-register": "^6.24.1",
+    "chai": "^4.1.0",
     "css-loader": "^0.28.4",
     "extract-text-webpack-plugin": ">2",
     "lodash": "^4.17.4",
     "lodash.merge": "^4.6.0",
+    "mocha": "^3.4.2",
     "node-sass": "^4.5.3",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.18.2",
     "uglifyjs-webpack-plugin": "^0.4.6",
     "webpack": ">=2.0.0",
     "webpack-dev-server": "^2.5.0",
-    "write-file-webpack-plugin": "^4.1.0"
+    "write-file-webpack-plugin": "^4.1.0",
+    "yargs": "^8.0.2"
   }
 }
