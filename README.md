@@ -4,7 +4,7 @@ Slider
 ## Installation
 
 ```
-<script src="../dist/btm-slider.min.js"></script>
+<script src="../dist/jgb-slider.min.js"></script>
 ```
 
 or
@@ -21,7 +21,7 @@ Import the sass file
 ```
 @import .js-slider.scss;
 
-<link href="./node_modules/jgb-slider/dist/btm-slider.min.css" rel="stylesheet" />
+<link href="./node_modules/jgb-slider/dist/jgb-slider.min.css" rel="stylesheet" />
 
 ```
 
