@@ -7,8 +7,6 @@
   </head>
   <body>
       <div class="example-slider">
-          <span class="example-slider__prev-slide"></span>
-          <span class="example-slider__next-slide"></span>
           <ol class="example-slider__slider">
               <li class="example-slider__slide">
                   <img src="http://placehold.it/1200x351" />
@@ -32,7 +30,8 @@
       <script>
       window.el = jgbslider({
           selector: '.example-slider',
-          bullets: true
+          bullets: true,
+          prevNextButtons: false
       });
       </script>
   </body>

@@ -21,7 +21,8 @@ export default class {
           beforeSlide: function() {},
           afterSlide: function() {},
           onStartAutoplay: function() {},
-          onStopAutoplay: function() {}
+          onStopAutoplay: function() {},
+          prevNextButtons: true
         };
 
         this.options = Object.assign({}, defaults, userSettings);
@@ -30,8 +31,6 @@ export default class {
             this.dom = {};
             this.dom.slider = this.options.el.querySelector('.' + this.options.blockname + '__slider');
             this.dom.slides = this.options.el.querySelectorAll('.' + this.options.blockname + '__slide');
-            this.dom.next = this.options.el.querySelector('.' + this.options.blockname + '__next-slide');
-            this.dom.prev = this.options.el.querySelector('.' + this.options.blockname + '__prev-slide');
         } catch (err) {
             console.log('The dom is missing some elements', err);
             return;
@@ -42,7 +41,6 @@ export default class {
 
         this.listenToErrors();
         this.listen();
-        this.listenToUiEvents();
 
         InitHandler(
             this.store, 
@@ -53,6 +51,7 @@ export default class {
         );
         
         this.initBulletsUI();
+        this.initButtonsUI();
     }
     
     initBulletsUI() {
@@ -74,14 +73,28 @@ export default class {
         this.options.el.appendChild(bullets);
         this.dom.bullets = bullets;
     }
-
-    listenToUiEvents() {
+    
+    initButtonsUI() {
+        if (!this.options.prevNextButtons) {
+            return;
+        }
+        
+        this.dom.next = document.createElement("span");
+        this.dom.next.classList.add(this.options.blockname + '__next-slide');
+        
+        this.dom.prev = document.createElement("span");
+        this.dom.prev.classList.add(this.options.blockname + '__prev-slide');
+        
+        this.options.el.appendChild(this.dom.prev);
+        this.options.el.appendChild(this.dom.next);
+        
         this.dom.next.addEventListener('click', () => {
             this.next();
         });
         this.dom.prev.addEventListener('click', () => {
             this.prev();
         });
+        
     }
 
     listenToErrors() {
