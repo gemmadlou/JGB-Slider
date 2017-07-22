@@ -6,7 +6,7 @@ export default function(store, bus) {
         store.update(new TransitionToNextSlide(store.get()));
         bus.emit('TransitionToNextSlideStarted');
         setTimeout(function() {
-            CompleteTransitionHandler(store.get(), bus);
+            CompleteTransitionHandler(store, bus);
         }, store.get().slideDuration);
     } catch (err) {
         bus.emit(err.name, err);

@@ -2416,9 +2416,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-exports.default = function (state, bus) {
+exports.default = function (store, bus) {
     try {
-        bus.emit('TransitionCompleted', new _CompleteTransition2.default(state));
+        bus.emit('TransitionCompleted', new _CompleteTransition2.default(store.get()));
     } catch (err) {
         bus.emit(err.name, err);
     }
@@ -3832,7 +3832,7 @@ exports.default = function (store, bus) {
         store.update(new _TransitionToNextSlide2.default(store.get()));
         bus.emit('TransitionToNextSlideStarted');
         setTimeout(function () {
-            (0, _CompleteTransitionHandler2.default)(store.get(), bus);
+            (0, _CompleteTransitionHandler2.default)(store, bus);
         }, store.get().slideDuration);
     } catch (err) {
         bus.emit(err.name, err);
