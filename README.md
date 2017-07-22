@@ -12,7 +12,7 @@ First set up your javascript
 or
 
 ```
-import Slider from 'BTMSlider';
+import Slider from 'jgbslider';
 
 ```
 
@@ -52,13 +52,13 @@ Import the sass file
 ```
 
 ```
-var sliders = new BTMSlider();
+var sliders = new jgbslider();
 ```
 
 or
 
 ```
-var sliders = new BTMSlider({
+var sliders = new jgbslider({
     el: document.querySelector('.example-slider'),
     slideDuration: 1000, // default set
     autoplay: true, // default is false
@@ -114,5 +114,5 @@ afterSlide: function() { ... }
 
 ### Multiple sliders?
 
-You are returned an array of instances which are created when you initialize BTMSlider.
+You are returned an array of instances which are created when you initialize jgbslider.
 Therefore, you can have multiple sliders on a page using the same class.
