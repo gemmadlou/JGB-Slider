@@ -9554,36 +9554,65 @@ var _class = function () {
         this.listenToUiEvents();
 
         (0, _InitHandler2.default)(this.store, this.bus, this.dom.slides.length, this.options.slideDuration, this.options.autoplaySpeed);
+
+        this.initBulletsUI();
     }
 
     _createClass(_class, [{
-        key: 'listenToUiEvents',
-        value: function listenToUiEvents() {
+        key: 'initBulletsUI',
+        value: function initBulletsUI() {
             var _this = this;
 
+            if (!this.options.bullets) {
+                return;
+            }
+
+            var bullets = document.createElement("ol");
+            bullets.classList.add(this.options.blockname + '__bullets');
+
+            var _loop = function _loop(i) {
+                var bullet = document.createElement("li");
+                bullet.classList.add(_this.options.blockname + '__bullet');
+                bullet.addEventListener('click', function () {
+                    _this.goTo(i);
+                });
+                bullets.appendChild(bullet);
+            };
+
+            for (var i = 1; i <= this.store.get().numberOfSlides; i++) {
+                _loop(i);
+            }
+            this.options.el.appendChild(bullets);
+            this.dom.bullets = bullets;
+        }
+    }, {
+        key: 'listenToUiEvents',
+        value: function listenToUiEvents() {
+            var _this2 = this;
+
             this.dom.next.addEventListener('click', function () {
-                _this.next();
+                _this2.next();
             });
             this.dom.prev.addEventListener('click', function () {
-                _this.prev();
+                _this2.prev();
             });
         }
     }, {
         key: 'listenToErrors',
         value: function listenToErrors() {
-            var _this2 = this;
+            var _this3 = this;
 
             this.bus.on('InitiationFailedException', function (err) {
                 console.log('init failed', err.name, err.message, err.stack);
             });
             this.bus.on('TransitionToNextSlideFailedException', function (err) {
-                console.log(err, 'error', _this2.store);
+                console.log(err, 'error', _this3.store);
             });
             this.bus.on('TransitionToPreviousSlideFailedException', function (err) {
-                console.log(err, 'error', _this2.store);
+                console.log(err, 'error', _this3.store);
             });
             this.bus.on('TransitionToFailedException', function (err) {
-                console.log(err, 'error', _this2.store);
+                console.log(err, 'error', _this3.store);
             });
             this.bus.on('TransitionToFailedException', function (err) {
                 console.log(err, 'error');
@@ -9595,32 +9624,32 @@ var _class = function () {
     }, {
         key: 'listen',
         value: function listen() {
-            var _this3 = this;
+            var _this4 = this;
 
             this.bus.on('Initiated', function (state) {
-                _this3.dom.slider.style.transitionDuration = _this3.store.get().slideDuration + 'ms';
-                _this3.options.onInit();
+                _this4.dom.slider.style.transitionDuration = _this4.store.get().slideDuration + 'ms';
+                _this4.options.onInit();
             });
             this.bus.on('TransitionToNextSlideStarted', function (state) {
-                _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
-                _this3.options.beforeSlide();
+                _this4.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this4.store.get());
+                _this4.options.beforeSlide();
             });
             this.bus.on('TransitionToPreviousSlideStarted', function (state) {
-                _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
-                _this3.options.beforeSlide();
+                _this4.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this4.store.get());
+                _this4.options.beforeSlide();
             });
             this.bus.on('TransitionToStarted', function (state) {
-                _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
-                _this3.options.beforeSlide();
+                _this4.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this4.store.get());
+                _this4.options.beforeSlide();
             });
             this.bus.on('TransitionCompleted', function (state) {
-                _this3.options.afterSlide();
+                _this4.options.afterSlide();
             });
             this.bus.on('AutoplayStopped', function (state) {
-                _this3.options.onStopAutoplay();
+                _this4.options.onStopAutoplay();
             });
             this.bus.on('AutoplayStarted', function (state) {
-                _this3.options.onStartAutoplay();
+                _this4.options.onStartAutoplay();
             });
         }
     }, {

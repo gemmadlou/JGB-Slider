@@ -51,6 +51,28 @@ export default class {
             this.options.slideDuration,
             this.options.autoplaySpeed
         );
+        
+        this.initBulletsUI();
+    }
+    
+    initBulletsUI() {
+        if (!this.options.bullets) {
+            return;
+        }
+        
+        let bullets = document.createElement("ol");
+        bullets.classList.add(this.options.blockname + '__bullets');
+        
+        for (let i = 1; i <= this.store.get().numberOfSlides; i++) {
+            let bullet = document.createElement("li");
+            bullet.classList.add(this.options.blockname + '__bullet');
+            bullet.addEventListener('click', () => {
+                this.goTo(i);
+            });
+            bullets.appendChild(bullet);
+        }
+        this.options.el.appendChild(bullets);
+        this.dom.bullets = bullets;
     }
 
     listenToUiEvents() {

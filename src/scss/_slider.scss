@@ -1,4 +1,5 @@
 @mixin slider ($buttonColor: #ffffff) {
+    
     display: block;
     overflow: hidden;
     position: relative;
@@ -33,6 +34,23 @@
         height: 20px;
         position: absolute;
         right: 0;
+        width: 20px;
+    }
+    
+    &__bullets {
+        bottom: 20px;
+        left: 50%;
+        position: absolute;
+        transform: translateX(-50%);
+    }
+    
+    &__bullet {
+        background-color: $buttonColor;
+        cursor: pointer;
+        display: inline-block;
+        height: 20px;
+        margin: 0 5px;
+        vertical-align: middle;
         width: 20px;
     }
 }

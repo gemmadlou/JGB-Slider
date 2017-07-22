@@ -27,3 +27,16 @@
     position: absolute;
     right: 0;
     width: 20px; }
+  .js-slider__bullets {
+    bottom: 20px;
+    left: 50%;
+    position: absolute;
+    transform: translateX(-50%); }
+  .js-slider__bullet {
+    background-color: #ffffff;
+    cursor: pointer;
+    display: inline-block;
+    height: 20px;
+    margin: 0 5px;
+    vertical-align: middle;
+    width: 20px; }
