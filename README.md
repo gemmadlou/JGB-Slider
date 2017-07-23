@@ -1,9 +1,14 @@
 Slider
 -----
 
+A simple vanilla js slider with basic controls, event handlers, and accessible methods for customisation.
+
+
 ## Installation
 
 ```
+npm install jsb-slider
+
 <script src="../dist/jgb-slider.min.js"></script>
 ```
 
@@ -110,7 +115,15 @@ afterSlide: function() { ... }
 
 ```
 
-### Multiple sliders?
 
-You are returned an array of instances which are created when you initialize jgbslider.
-Therefore, you can have multiple sliders on a page using the same class.
+## Contributing
+
+The fun part of this slider - is the underlying domain model which was built with pure functions, inspired by elm, redux and the SAM pattern (of which I'm yet to understand well).
+
+Just make a pull request. Any additional logic should have a test to go with it. 
+
+```
+npm run # to find out what dev commands you can fun
+```
+
+Before you push the project - run a build to generate the dist files and test with either a new example - or an updated example.
