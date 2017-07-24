@@ -1,14 +1,14 @@
 {
   "name": "jgb-slider",
   "version": "0.1.1",
-  "description": "",
+  "description": "A simple vanilla js slider with basic controls built with ES6 and inspired by Elm, Redux and CQRS.",
   "main": "./dist/btm-slider.min.js",
   "repository": "https://github.com/gemmadlou/JGB-Slider/releases",
   "engines": {
     "node": ">=6.0"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha --recursive --require babel-polyfill --compilers js:babel-register test",
+    "test": "./node_modules/.bin/nyc ./node_modules/mocha/bin/mocha --recursive --require babel-polyfill --compilers js:babel-register test",
     "build": "./node_modules/.bin/webpack --config webpack.config.js --optimize-minimize --env production",
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --progress --watch --env dev",
     "server": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev",
@@ -28,6 +28,7 @@
     "chai": "^4.1.0",
     "css-loader": "^0.28.4",
     "extract-text-webpack-plugin": ">2",
+    "istanbul": "^0.4.5",
     "lodash": "^4.17.4",
     "lodash.merge": "^4.6.0",
     "mocha": "^3.4.2",
