@@ -1,7 +1,11 @@
-Slider
+JGB Slider
 -----
 
 A simple vanilla js slider with basic controls, event handlers, and accessible methods for customisation.
+
+Please note:
+
+This is still in progress. The api may change until it's officially at v1.0.0.
 
 
 ## Installation
