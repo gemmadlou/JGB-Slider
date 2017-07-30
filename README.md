@@ -7,7 +7,7 @@ A simple vanilla js slider with basic controls, event handlers, and accessible m
 ## Installation
 
 ```
-npm install jsb-slider
+npm install jgb-slider
 
 <script src="../dist/jgb-slider.min.js"></script>
 ```
