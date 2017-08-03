@@ -2,7 +2,7 @@
   "name": "jgb-slider",
   "version": "0.1.0",
   "description": "",
-  "main": "./dist/btm-slider.min.js",
+  "main": "dist/btm-slider.min.js",
   "repository": "https://github.com/gemmadlou/JGB-Slider/releases",
   "engines": {
     "node": ">=6.0"
