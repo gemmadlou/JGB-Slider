@@ -2,7 +2,7 @@
   "name": "jgb-slider",
   "version": "0.1.2",
   "description": "A simple vanilla js slider with basic controls built with ES6 and inspired by Elm, Redux and CQRS.",
-  "main": "dist/btm-slider.min.js",
+  "main": "dist/jgb-slider.min.js",
   "repository": "https://github.com/gemmadlou/JGB-Slider/releases",
   "engines": {
     "node": ">=6.0"
