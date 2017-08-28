@@ -19,7 +19,7 @@ npm install jgb-slider
 ```
 
 let Slider = require('jgb-slider');
-import Slider from 'jgbslider';
+import Slider from 'jgb-slider';
 
 ```
 
