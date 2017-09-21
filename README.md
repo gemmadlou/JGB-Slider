@@ -10,7 +10,7 @@ This is still in progress. The api may change until it's officially at v1.0.0.
 
 ## Installation
 
-```
+```js
 npm install jgb-slider
 
 <script src="../dist/jgb-slider.min.js"></script>
@@ -23,10 +23,16 @@ import Slider from 'jgb-slider';
 
 ```
 
-Import the sass file
+Import the styl file
 
-```
-@import .js-slider.scss;
+```css
+@import "~/jgb-slider/src/js-slider";
+
+// or
+
+@import "~/jgb-slider/src/slider"; // For mixin
+
+// or
 
 <link href="./node_modules/jgb-slider/dist/jgb-slider.min.css" rel="stylesheet" />
 
@@ -34,7 +40,10 @@ Import the sass file
 
 ## Instantiation
 
-```
+Previous and next buttons as well as bullets are automatically created
+and managed based on your javascript options.
+
+```html
 <div class="example-slider">
     <ol class="example-slider__slider">
         <li class="example-slider__slide">
@@ -56,14 +65,14 @@ Import the sass file
 </div>
 ```
 
-```
-var sliders = jgbslider();
+```js
+jgbslider();
 ```
 
 or
 
-```
-var sliders = jgbslider({
+```js
+jgbslider({
     selector: '.example-slider',
     slideDuration: 1000, // default set
     autoplay: true, // default is false
@@ -71,6 +80,14 @@ var sliders = jgbslider({
         alert('Slider initialized')
     }
 });
+```
+
+The slider instance attaches itself to the DOM element. Therefore, you can have
+multiple instances of the slider in the page. You would access it in the following means.
+
+```js
+    var instance = document.querySelector('example-slider:first-child').slider;
+        instance.stopAutoplay();
 ```
 
 ### The css follows BEM
@@ -102,7 +119,7 @@ instance.stopAutoplay();
 
 ### Eventhandlers
 
-```
+```js
 onStartAutoplay: function() { ... },
 
 onStopAutoplay: function() { ... },
