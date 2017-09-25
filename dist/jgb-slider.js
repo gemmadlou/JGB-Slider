@@ -9888,7 +9888,7 @@ var _Store = __webpack_require__(114);
 
 var _Store2 = _interopRequireDefault(_Store);
 
-var _ForEach = __webpack_require__(117);
+var _ForEach = __webpack_require__(115);
 
 var _ForEach2 = _interopRequireDefault(_ForEach);
 
@@ -9956,7 +9956,6 @@ var _class = function () {
             this.options.el.appendChild(bullets);
             this.dom.bulletsContainer = bullets;
             this.dom.bullets = this.dom.bulletsContainer.querySelectorAll('.' + this.options.blockname + '__bullet');
-            console.log(this.dom);
         }
     }, {
         key: 'initButtonsUI',
@@ -10404,7 +10403,7 @@ exports.default = function (store, bus, slideNumber) {
         store.update(new _TransitionTo2.default(store.get(), slideNumber));
         bus.emit('TransitionToStarted');
         setTimeout(function () {
-            (0, _CompleteTransitionHandler2.default)(store.get(), bus);
+            (0, _CompleteTransitionHandler2.default)(store, bus);
         }, store.get().slideDuration);
     } catch (err) {
         bus.emit(err.name, err);
@@ -10748,9 +10747,7 @@ var _class = function () {
 exports.default = _class;
 
 /***/ }),
-/* 115 */,
-/* 116 */,
-/* 117 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
