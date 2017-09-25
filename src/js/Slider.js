@@ -36,8 +36,8 @@ export default class {
             return;
         }
 
-        this.store = new Store();
-        this.bus = new Bus();
+        this.store = new Store;
+        this.bus = new Bus;
 
         this.listenToErrors();
         this.listen();
@@ -52,6 +52,7 @@ export default class {
         
         this.initBulletsUI();
         this.initButtonsUI();
+        this.initTouchEvent();
     }
     
     initBulletsUI() {
@@ -91,10 +92,41 @@ export default class {
         this.dom.next.addEventListener('click', () => {
             this.next();
         });
+
         this.dom.prev.addEventListener('click', () => {
             this.prev();
         });
         
+    }
+
+    initTouchEvent() {
+        let touch = {
+            startX: undefined,
+            throttle: 100,
+            inProgress: false
+        }
+
+        let touchdirection = (startX, endX) => endX < startX ? 'right' : 'left';
+
+        this.dom.slider.addEventListener('touchstart', (event) => {
+            touch.startX = event.touches[0].screenX;
+        });
+
+        this.dom.slider.addEventListener('touchmove', (event) => {
+            if (touch.inProgress) {
+                return;
+            }
+            let move = touchdirection(touch.startX, event.touches[0].screenX) === 'right'
+                ? this.next : this.prev;
+
+            move.bind(this)();
+            touch.inProgress = true;
+        })
+
+        this.dom.slider.addEventListener('touchend', (event) => {
+            event.preventDefault();
+            touch.inProgress = false;
+        });
     }
 
     listenToErrors() {
