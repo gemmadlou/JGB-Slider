@@ -71,7 +71,6 @@ export default class {
         this.options.el.appendChild(bullets);
         this.dom.bulletsContainer = bullets;
         this.dom.bullets = this.dom.bulletsContainer.querySelectorAll('.' + this.options.blockname + '__bullet');
-        console.log(this.dom)
     }
     
     initButtonsUI() {
