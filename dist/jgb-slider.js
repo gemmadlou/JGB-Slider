@@ -2418,7 +2418,8 @@ Object.defineProperty(exports, "__esModule", {
 
 exports.default = function (store, bus) {
     try {
-        bus.emit('TransitionCompleted', new _CompleteTransition2.default(store.get()));
+        store.update(new _CompleteTransition2.default(store.get()));
+        bus.emit('TransitionCompleted');
     } catch (err) {
         bus.emit(err.name, err);
     }
@@ -9887,6 +9888,10 @@ var _Store = __webpack_require__(114);
 
 var _Store2 = _interopRequireDefault(_Store);
 
+var _ForEach = __webpack_require__(117);
+
+var _ForEach2 = _interopRequireDefault(_ForEach);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -9953,7 +9958,9 @@ var _class = function () {
                 _loop(i);
             }
             this.options.el.appendChild(bullets);
-            this.dom.bullets = bullets;
+            this.dom.bulletsContainer = bullets;
+            this.dom.bullets = this.dom.bulletsContainer.querySelectorAll('.' + this.options.blockname + '__bullet');
+            console.log(this.dom);
         }
     }, {
         key: 'initButtonsUI',
@@ -10016,6 +10023,18 @@ var _class = function () {
             });
         }
     }, {
+        key: 'selectActiveSlide',
+        value: function selectActiveSlide() {
+            var _this4 = this;
+
+            if (this.dom.bullets !== undefined) {
+                (0, _ForEach2.default)(this.dom.bullets, function (index) {
+                    var action = index === _this4.store.get().currentSlide - 1 ? 'add' : 'remove';
+                    _this4.dom.bullets[index].classList[action]('is-active');
+                });
+            }
+        }
+    }, {
         key: 'listenToErrors',
         value: function listenToErrors() {
             this.bus.on('InitiationFailedException', function (err) {
@@ -10025,32 +10044,33 @@ var _class = function () {
     }, {
         key: 'listen',
         value: function listen() {
-            var _this4 = this;
+            var _this5 = this;
 
-            this.bus.on('Initiated', function (state) {
-                _this4.dom.slider.style.transitionDuration = _this4.store.get().slideDuration + 'ms';
-                _this4.options.onInit();
+            this.bus.on('Initiated', function () {
+                _this5.dom.slider.style.transitionDuration = _this5.store.get().slideDuration + 'ms';
+                _this5.options.onInit();
             });
-            this.bus.on('TransitionToNextSlideStarted', function (state) {
-                _this4.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this4.store.get());
-                _this4.options.beforeSlide();
+            this.bus.on('TransitionToNextSlideStarted', function () {
+                _this5.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this5.store.get());
+                _this5.options.beforeSlide();
             });
-            this.bus.on('TransitionToPreviousSlideStarted', function (state) {
-                _this4.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this4.store.get());
-                _this4.options.beforeSlide();
+            this.bus.on('TransitionToPreviousSlideStarted', function () {
+                _this5.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this5.store.get());
+                _this5.options.beforeSlide();
             });
-            this.bus.on('TransitionToStarted', function (state) {
-                _this4.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this4.store.get());
-                _this4.options.beforeSlide();
+            this.bus.on('TransitionToStarted', function () {
+                _this5.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this5.store.get());
+                _this5.options.beforeSlide();
             });
-            this.bus.on('TransitionCompleted', function (state) {
-                _this4.options.afterSlide();
+            this.bus.on('TransitionCompleted', function () {
+                _this5.selectActiveSlide();
+                _this5.options.afterSlide();
             });
-            this.bus.on('AutoplayStopped', function (state) {
-                _this4.options.onStopAutoplay();
+            this.bus.on('AutoplayStopped', function () {
+                _this5.options.onStopAutoplay();
             });
-            this.bus.on('AutoplayStarted', function (state) {
-                _this4.options.onStartAutoplay();
+            this.bus.on('AutoplayStarted', function () {
+                _this5.options.onStartAutoplay();
             });
         }
     }, {
@@ -10726,6 +10746,28 @@ var _class = function () {
 }();
 
 exports.default = _class;
+
+/***/ }),
+/* 115 */,
+/* 116 */,
+/* 117 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (array, callback, scope) {
+    for (var i = 0; i < array.length; i++) {
+        callback.call(scope, i, array[i]);
+    }
+};
+
+; // Stolen from Todd Motto thank you!
+// https://toddmotto.com/ditch-the-array-foreach-call-nodelist-hack/
 
 /***/ })
 /******/ ]);

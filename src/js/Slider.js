@@ -11,6 +11,7 @@ import GetSliderPositionAsPercentage from './ActionHelper/GetSliderPositionAsPer
 
 import Bus from './Helpers/Bus.js';
 import Store from './Helpers/Store.js';
+import forEach from './Helpers/ForEach.js';
 
 export default class {
 
@@ -72,7 +73,9 @@ export default class {
             bullets.appendChild(bullet);
         }
         this.options.el.appendChild(bullets);
-        this.dom.bullets = bullets;
+        this.dom.bulletsContainer = bullets;
+        this.dom.bullets = this.dom.bulletsContainer.querySelectorAll('.' + this.options.blockname + '__bullet');
+        console.log(this.dom)
     }
     
     initButtonsUI() {
@@ -129,6 +132,15 @@ export default class {
         });
     }
 
+    selectActiveSlide() {
+        if (this.dom.bullets !== undefined) {
+            forEach(this.dom.bullets, (index) => {
+                let action = index === this.store.get().currentSlide - 1 ? 'add' : 'remove';
+                this.dom.bullets[index].classList[action]('is-active');
+            });
+        }
+    }
+
     listenToErrors() {
         this.bus.on('InitiationFailedException', (err) => {
             console.log('There was a problem initializing the slider', err.name, err.message, err.stack);
@@ -136,29 +148,30 @@ export default class {
     }
 
     listen() {
-        this.bus.on('Initiated', (state) => {
+        this.bus.on('Initiated', () => {
             this.dom.slider.style.transitionDuration = this.store.get().slideDuration + 'ms';
             this.options.onInit();
         });
-        this.bus.on('TransitionToNextSlideStarted', (state) => {
+        this.bus.on('TransitionToNextSlideStarted', () => {
             this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());
             this.options.beforeSlide();
         });
-        this.bus.on('TransitionToPreviousSlideStarted', (state) => {
+        this.bus.on('TransitionToPreviousSlideStarted', () => {
             this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());
             this.options.beforeSlide();
         });
-        this.bus.on('TransitionToStarted', (state) => {
+        this.bus.on('TransitionToStarted', () => {
             this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());
             this.options.beforeSlide();
         });
-        this.bus.on('TransitionCompleted', (state) => {
+        this.bus.on('TransitionCompleted', () => {
+            this.selectActiveSlide();
             this.options.afterSlide();
         });
-        this.bus.on('AutoplayStopped', (state) => {
+        this.bus.on('AutoplayStopped', () => {
             this.options.onStopAutoplay(); 
         });
-        this.bus.on('AutoplayStarted', (state) => {
+        this.bus.on('AutoplayStarted', () => {
             this.options.onStartAutoplay(); 
         });
     }
