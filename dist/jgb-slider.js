@@ -9927,10 +9927,6 @@ var _class = function () {
         this.listen();
 
         (0, _InitHandler2.default)(this.store, this.bus, this.dom.slides.length, this.options.slideDuration, this.options.autoplaySpeed);
-
-        this.initBulletsUI();
-        this.initButtonsUI();
-        this.initTouchEvent();
     }
 
     _createClass(_class, [{
@@ -10047,6 +10043,10 @@ var _class = function () {
             var _this5 = this;
 
             this.bus.on('Initiated', function () {
+                _this5.initBulletsUI();
+                _this5.initButtonsUI();
+                _this5.initTouchEvent();
+                _this5.selectActiveSlide();
                 _this5.dom.slider.style.transitionDuration = _this5.store.get().slideDuration + 'ms';
                 _this5.options.onInit();
             });

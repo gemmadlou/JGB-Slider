@@ -50,10 +50,6 @@ export default class {
             this.options.slideDuration,
             this.options.autoplaySpeed
         );
-        
-        this.initBulletsUI();
-        this.initButtonsUI();
-        this.initTouchEvent();
     }
     
     initBulletsUI() {
@@ -149,6 +145,10 @@ export default class {
 
     listen() {
         this.bus.on('Initiated', () => {
+            this.initBulletsUI();
+            this.initButtonsUI();
+            this.initTouchEvent();
+            this.selectActiveSlide();
             this.dom.slider.style.transitionDuration = this.store.get().slideDuration + 'ms';
             this.options.onInit();
         });
