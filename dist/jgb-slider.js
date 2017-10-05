@@ -10047,6 +10047,7 @@ var _class = function () {
                 _this5.initTouchEvent();
                 _this5.selectActiveSlide();
                 _this5.dom.slider.style.transitionDuration = _this5.store.get().slideDuration + 'ms';
+                _this5.dom.slider.style.width = _this5.store.get().numberOfSlides * 100 + '%';
                 _this5.options.onInit();
             });
             this.bus.on('TransitionToNextSlideStarted', function () {

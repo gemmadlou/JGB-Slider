@@ -149,6 +149,7 @@ export default class {
             this.initTouchEvent();
             this.selectActiveSlide();
             this.dom.slider.style.transitionDuration = this.store.get().slideDuration + 'ms';
+            this.dom.slider.style.width = (this.store.get().numberOfSlides * 100) + '%';
             this.options.onInit();
         });
         this.bus.on('TransitionToNextSlideStarted', () => {
