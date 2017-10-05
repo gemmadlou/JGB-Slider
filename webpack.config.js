@@ -53,7 +53,7 @@ var script = {
     },
     entry: './src/js/index.js',
     output: {
-        filename: 'jgb-slider.min.js',
+        filename: (env === 'production') ? 'jgb-slider.min.js' : 'jgb-slider.js',
         path: path.resolve(__dirname, 'dist/'),
         publicPath: '/dist',
         library: 'jgbslider',

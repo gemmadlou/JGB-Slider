@@ -329,7 +329,7 @@ process.umask = function() { return 0; };
  * Expose `debug()` as the module.
  */
 
-exports = module.exports = __webpack_require__(59);
+exports = module.exports = __webpack_require__(60);
 exports.log = log;
 exports.formatArgs = formatArgs;
 exports.save = save;
@@ -638,7 +638,7 @@ module.exports = {
 ;(function () {
   // Detect the `define` function exposed by asynchronous module loaders. The
   // strict `define` check is necessary for compatibility with `r.js`.
-  var isLoader = "function" === "function" && __webpack_require__(66);
+  var isLoader = "function" === "function" && __webpack_require__(67);
 
   // A set of types used to distinguish objects from primitives.
   var objectTypes = {
@@ -1629,7 +1629,7 @@ if (!isChromePackagedApp) {
 
 
 /* global crypto:true */
-var crypto = __webpack_require__(56);
+var crypto = __webpack_require__(57);
 
 // This string has length 32, a power of 2, so the modulus doesn't introduce a
 // bias.
@@ -2399,7 +2399,7 @@ var _GetCurrentSlide = __webpack_require__(13);
 
 var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
 
-var _TransitionToFailedException = __webpack_require__(97);
+var _TransitionToFailedException = __webpack_require__(100);
 
 var _TransitionToFailedException2 = _interopRequireDefault(_TransitionToFailedException);
 
@@ -2418,13 +2418,14 @@ Object.defineProperty(exports, "__esModule", {
 
 exports.default = function (store, bus) {
     try {
-        bus.emit('TransitionCompleted', new _CompleteTransition2.default(store.get()));
+        store.update(new _CompleteTransition2.default(store.get()));
+        bus.emit('TransitionCompleted');
     } catch (err) {
         bus.emit(err.name, err);
     }
 };
 
-var _CompleteTransition = __webpack_require__(98);
+var _CompleteTransition = __webpack_require__(101);
 
 var _CompleteTransition2 = _interopRequireDefault(_CompleteTransition);
 
@@ -2465,8 +2466,8 @@ module.exports = function(module) {
 "use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var required = __webpack_require__(57)
-  , qs = __webpack_require__(58)
+var required = __webpack_require__(58)
+  , qs = __webpack_require__(59)
   , protocolre = /^([a-z][a-z0-9.+-]*:)?(\/\/)?([\S\s]*)/i
   , slashes = /^[A-Za-z][A-Za-z0-9+-.]*:\/\//;
 
@@ -2951,8 +2952,8 @@ module.exports = EventTarget;
 
 var inherits = __webpack_require__(0)
   , urlUtils = __webpack_require__(5)
-  , BufferedSender = __webpack_require__(63)
-  , Polling = __webpack_require__(64)
+  , BufferedSender = __webpack_require__(64)
+  , Polling = __webpack_require__(65)
   ;
 
 var debug = function() {};
@@ -3244,7 +3245,7 @@ module.exports = XdrStreamingTransport;
 
 var inherits = __webpack_require__(0)
   , AjaxBasedTransport = __webpack_require__(9)
-  , EventSourceReceiver = __webpack_require__(65)
+  , EventSourceReceiver = __webpack_require__(66)
   , XHRCorsObject = __webpack_require__(15)
   , EventSourceDriver = __webpack_require__(31)
   ;
@@ -3430,7 +3431,7 @@ module.exports = IframeTransport;
 /* 33 */
 /***/ (function(module, exports) {
 
-module.exports = '1.1.2';
+module.exports = '1.1.4';
 
 
 /***/ }),
@@ -3441,7 +3442,7 @@ module.exports = '1.1.2';
 
 
 var inherits = __webpack_require__(0)
-  , HtmlfileReceiver = __webpack_require__(67)
+  , HtmlfileReceiver = __webpack_require__(68)
   , XHRLocalObject = __webpack_require__(10)
   , AjaxBasedTransport = __webpack_require__(9)
   ;
@@ -3839,7 +3840,7 @@ exports.default = function (store, bus) {
     }
 };
 
-var _TransitionToNextSlide = __webpack_require__(96);
+var _TransitionToNextSlide = __webpack_require__(99);
 
 var _TransitionToNextSlide2 = _interopRequireDefault(_TransitionToNextSlide);
 
@@ -3879,203 +3880,241 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(43);
-module.exports = __webpack_require__(91);
+module.exports = __webpack_require__(94);
 
 
 /***/ }),
 /* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
-/* WEBPACK VAR INJECTION */(function(__resourceQuery) {/* global __resourceQuery WorkerGlobalScope */
-var url = __webpack_require__(44);
-var stripAnsi = __webpack_require__(50);
-var socket = __webpack_require__(52);
-var overlay = __webpack_require__(84);
+"use strict";
+/* WEBPACK VAR INJECTION */(function(__resourceQuery) {
+
+/* global __resourceQuery WorkerGlobalScope self */
+/* eslint prefer-destructuring: off */
+
+const url = __webpack_require__(44);
+const stripAnsi = __webpack_require__(50);
+const log = __webpack_require__(52).getLogger('webpack-dev-server');
+const socket = __webpack_require__(53);
+const overlay = __webpack_require__(85);
 
 function getCurrentScriptSource() {
-	// `document.currentScript` is the most accurate way to find the current script,
-	// but is not supported in all browsers.
-	if(document.currentScript)
-		return document.currentScript.getAttribute("src");
-	// Fall back to getting all scripts in the document.
-	var scriptElements = document.scripts || [];
-	var currentScript = scriptElements[scriptElements.length - 1];
-	if(currentScript)
-		return currentScript.getAttribute("src");
-	// Fail as there was no script to use.
-	throw new Error("[WDS] Failed to get current script source");
+  // `document.currentScript` is the most accurate way to find the current script,
+  // but is not supported in all browsers.
+  if (document.currentScript) { return document.currentScript.getAttribute('src'); }
+  // Fall back to getting all scripts in the document.
+  const scriptElements = document.scripts || [];
+  const currentScript = scriptElements[scriptElements.length - 1];
+  if (currentScript) { return currentScript.getAttribute('src'); }
+  // Fail as there was no script to use.
+  throw new Error('[WDS] Failed to get current script source.');
 }
 
-var urlParts;
-if(true) {
-	// If this bundle is inlined, use the resource query to get the correct url.
-	urlParts = url.parse(__resourceQuery.substr(1));
+let urlParts;
+let hotReload = true;
+if (typeof window !== 'undefined') {
+  const qs = window.location.search.toLowerCase();
+  hotReload = qs.indexOf('hotreload=false') === -1;
+}
+if (true) {
+  // If this bundle is inlined, use the resource query to get the correct url.
+  urlParts = url.parse(__resourceQuery.substr(1));
 } else {
-	// Else, get the url from the <script> this file was called with.
-	var scriptHost = getCurrentScriptSource();
-	scriptHost = scriptHost.replace(/\/[^\/]+$/, "");
-	urlParts = url.parse((scriptHost ? scriptHost : "/"), false, true);
+  // Else, get the url from the <script> this file was called with.
+  let scriptHost = getCurrentScriptSource();
+  // eslint-disable-next-line no-useless-escape
+  scriptHost = scriptHost.replace(/\/[^\/]+$/, '');
+  urlParts = url.parse((scriptHost || '/'), false, true);
 }
 
-var hot = false;
-var initial = true;
-var currentHash = "";
-var logLevel = "info";
-var useWarningOverlay = false;
-var useErrorOverlay = false;
-
-function log(level, msg) {
-	if(logLevel === "info" && level === "info")
-		return console.log(msg);
-	if(["info", "warning"].indexOf(logLevel) >= 0 && level === "warning")
-		return console.warn(msg);
-	if(["info", "warning", "error"].indexOf(logLevel) >= 0 && level === "error")
-		return console.error(msg);
+if (!urlParts.port || urlParts.port === '0') {
+  urlParts.port = self.location.port;
 }
+
+let hot = false;
+let initial = true;
+let currentHash = '';
+let useWarningOverlay = false;
+let useErrorOverlay = false;
+let useProgress = false;
+
+const INFO = 'info';
+const WARNING = 'warning';
+const ERROR = 'error';
+const NONE = 'none';
+
+// Set the default log level
+log.setDefaultLevel(INFO);
 
 // Send messages to the outside, so plugins can consume it.
 function sendMsg(type, data) {
-	if(
-		typeof self !== "undefined" &&
-		(typeof WorkerGlobalScope === "undefined" ||
-		!(self instanceof WorkerGlobalScope))
-	) {
-		self.postMessage({
-			type: "webpack" + type,
-			data: data
-		}, "*");
-	}
+  if (
+    typeof self !== 'undefined' &&
+  (typeof WorkerGlobalScope === 'undefined' ||
+  !(self instanceof WorkerGlobalScope))
+  ) {
+    self.postMessage({
+      type: 'webpack' + type,
+      data: data
+    }, '*');
+  }
 }
 
-var onSocketMsg = {
-	hot: function() {
-		hot = true;
-		log("info", "[WDS] Hot Module Replacement enabled.");
-	},
-	invalid: function() {
-		log("info", "[WDS] App updated. Recompiling...");
-		sendMsg("Invalid");
-	},
-	hash: function(hash) {
-		currentHash = hash;
-	},
-	"still-ok": function() {
-		log("info", "[WDS] Nothing changed.")
-		if(useWarningOverlay || useErrorOverlay) overlay.clear();
-		sendMsg("StillOk");
-	},
-	"log-level": function(level) {
-		logLevel = level;
-	},
-	"overlay": function(overlay) {
-		if(typeof document !== "undefined") {
-			if(typeof(overlay) === "boolean") {
-				useWarningOverlay = overlay;
-				useErrorOverlay = overlay;
-			} else if(overlay) {
-				useWarningOverlay = overlay.warnings;
-				useErrorOverlay = overlay.errors;
-			}
-		}
-	},
-	ok: function() {
-		sendMsg("Ok");
-		if(useWarningOverlay || useErrorOverlay) overlay.clear();
-		if(initial) return initial = false;
-		reloadApp();
-	},
-	"content-changed": function() {
-		log("info", "[WDS] Content base changed. Reloading...")
-		self.location.reload();
-	},
-	warnings: function(warnings) {
-		log("info", "[WDS] Warnings while compiling.");
-		var strippedWarnings = warnings.map(function(warning) {
-			return stripAnsi(warning);
-		});
-		sendMsg("Warnings", strippedWarnings);
-		for(var i = 0; i < strippedWarnings.length; i++)
-			log("warning", strippedWarnings[i]);
-		if(useWarningOverlay) overlay.showMessage(warnings);
+const onSocketMsg = {
+  hot: function msgHot() {
+    hot = true;
+    log.info('[WDS] Hot Module Replacement enabled.');
+  },
+  invalid: function msgInvalid() {
+    log.info('[WDS] App updated. Recompiling...');
+    // fixes #1042. overlay doesn't clear if errors are fixed but warnings remain.
+    if (useWarningOverlay || useErrorOverlay) overlay.clear();
+    sendMsg('Invalid');
+  },
+  hash: function msgHash(hash) {
+    currentHash = hash;
+  },
+  'still-ok': function stillOk() {
+    log.info('[WDS] Nothing changed.');
+    if (useWarningOverlay || useErrorOverlay) overlay.clear();
+    sendMsg('StillOk');
+  },
+  'log-level': function logLevel(level) {
+    const hotCtx = __webpack_require__(90);
+    const contextKeys = hotCtx.keys();
+    if (contextKeys.length && contextKeys['./log']) {
+      hotCtx('./log').setLogLevel(level);
+    }
+    switch (level) {
+      case INFO:
+      case ERROR:
+        log.setLevel(level);
+        break;
+      case WARNING:
+        // loglevel's warning name is different from webpack's
+        log.setLevel('warn');
+        break;
+      case NONE:
+        log.disableAll();
+        break;
+      default:
+        log.error('[WDS] Unknown clientLogLevel \'' + level + '\'');
+    }
+  },
+  overlay: function msgOverlay(value) {
+    if (typeof document !== 'undefined') {
+      if (typeof (value) === 'boolean') {
+        useWarningOverlay = false;
+        useErrorOverlay = value;
+      } else if (value) {
+        useWarningOverlay = value.warnings;
+        useErrorOverlay = value.errors;
+      }
+    }
+  },
+  progress: function msgProgress(progress) {
+    if (typeof document !== 'undefined') {
+      useProgress = progress;
+    }
+  },
+  'progress-update': function progressUpdate(data) {
+    if (useProgress) log.info('[WDS] ' + data.percent + '% - ' + data.msg + '.');
+  },
+  ok: function msgOk() {
+    sendMsg('Ok');
+    if (useWarningOverlay || useErrorOverlay) overlay.clear();
+    if (initial) return initial = false; // eslint-disable-line no-return-assign
+    reloadApp();
+  },
+  'content-changed': function contentChanged() {
+    log.info('[WDS] Content base changed. Reloading...');
+    self.location.reload();
+  },
+  warnings: function msgWarnings(warnings) {
+    log.warn('[WDS] Warnings while compiling.');
+    const strippedWarnings = warnings.map(function map(warning) { return stripAnsi(warning); });
+    sendMsg('Warnings', strippedWarnings);
+    for (let i = 0; i < strippedWarnings.length; i++) { log.warn(strippedWarnings[i]); }
+    if (useWarningOverlay) overlay.showMessage(warnings);
 
-		if(initial) return initial = false;
-		reloadApp();
-	},
-	errors: function(errors) {
-		log("info", "[WDS] Errors while compiling. Reload prevented.");
-		var strippedErrors = errors.map(function(error) {
-			return stripAnsi(error);
-		});
-		sendMsg("Errors", strippedErrors);
-		for(var i = 0; i < strippedErrors.length; i++)
-			log("error", strippedErrors[i]);
-		if(useErrorOverlay) overlay.showMessage(errors);
-	},
-	error: function(error) {
-		console.error(error);
-	},
-	close: function() {
-		log("error", "[WDS] Disconnected!");
-		sendMsg("Close");
-	}
+    if (initial) return initial = false; // eslint-disable-line no-return-assign
+    reloadApp();
+  },
+  errors: function msgErrors(errors) {
+    log.error('[WDS] Errors while compiling. Reload prevented.');
+    const strippedErrors = errors.map(function map(error) { return stripAnsi(error); });
+    sendMsg('Errors', strippedErrors);
+    for (let i = 0; i < strippedErrors.length; i++) { log.error(strippedErrors[i]); }
+    if (useErrorOverlay) overlay.showMessage(errors);
+  },
+  error: function msgError(error) {
+    log.error(error);
+  },
+  close: function msgClose() {
+    log.error('[WDS] Disconnected!');
+    sendMsg('Close');
+  }
 };
 
-var hostname = urlParts.hostname;
-var protocol = urlParts.protocol;
+let hostname = urlParts.hostname;
+let protocol = urlParts.protocol;
 
 
-//check ipv4 and ipv6 `all hostname`
-if(hostname === "0.0.0.0" || hostname === "::") {
-	// why do we need this check?
-	// hostname n/a for file protocol (example, when using electron, ionic)
-	// see: https://github.com/webpack/webpack-dev-server/pull/384
-	if(self.location.hostname && !!~self.location.protocol.indexOf("http")) {
-		hostname = self.location.hostname;
-	}
+// check ipv4 and ipv6 `all hostname`
+if (hostname === '0.0.0.0' || hostname === '::') {
+  // why do we need this check?
+  // hostname n/a for file protocol (example, when using electron, ionic)
+  // see: https://github.com/webpack/webpack-dev-server/pull/384
+  // eslint-disable-next-line no-bitwise
+  if (self.location.hostname && !!~self.location.protocol.indexOf('http')) {
+    hostname = self.location.hostname;
+  }
 }
 
 // `hostname` can be empty when the script path is relative. In that case, specifying
 // a protocol would result in an invalid URL.
 // When https is used in the app, secure websockets are always necessary
 // because the browser doesn't accept non-secure websockets.
-if(hostname && (self.location.protocol === "https:" || urlParts.hostname === "0.0.0.0")) {
-	protocol = self.location.protocol;
+if (hostname && (self.location.protocol === 'https:' || urlParts.hostname === '0.0.0.0')) {
+  protocol = self.location.protocol;
 }
 
-var socketUrl = url.format({
-	protocol: protocol,
-	auth: urlParts.auth,
-	hostname: hostname,
-	port: (urlParts.port === "0") ? self.location.port : urlParts.port,
-	pathname: urlParts.path == null || urlParts.path === "/" ? "/sockjs-node" : urlParts.path
+const socketUrl = url.format({
+  protocol: protocol,
+  auth: urlParts.auth,
+  hostname: hostname,
+  port: urlParts.port,
+  pathname: urlParts.path == null || urlParts.path === '/' ? '/sockjs-node' : urlParts.path
 });
 
 socket(socketUrl, onSocketMsg);
 
-var isUnloading = false;
-self.addEventListener("beforeunload", function() {
-	isUnloading = true;
+let isUnloading = false;
+self.addEventListener('beforeunload', function beforeUnload() {
+  isUnloading = true;
 });
 
 function reloadApp() {
-	if(isUnloading) {
-		return;
-	}
-	if(hot) {
-		log("info", "[WDS] App hot update...");
-		var hotEmitter = __webpack_require__(89);
-		hotEmitter.emit("webpackHotUpdate", currentHash);
-		if(typeof self !== "undefined" && self.window) {
-			// broadcast update to window
-			self.postMessage("webpackHotUpdate" + currentHash, "*");
-		}
-	} else {
-		log("info", "[WDS] App updated. Reloading...");
-		self.location.reload();
-	}
+  if (isUnloading || !hotReload) {
+    return;
+  }
+  if (hot) {
+    log.info('[WDS] App hot update...');
+    // eslint-disable-next-line global-require
+    const hotEmitter = __webpack_require__(92);
+    hotEmitter.emit('webpackHotUpdate', currentHash);
+    if (typeof self !== 'undefined' && self.window) {
+      // broadcast update to window
+      self.postMessage('webpackHotUpdate' + currentHash, '*');
+    }
+  } else {
+    log.info('[WDS] App updated. Reloading...');
+    self.location.reload();
+  }
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, "?http://slider-gemmadlou.c9users.io:8080"))
+/* WEBPACK VAR INJECTION */}.call(exports, "?http://localhost:8080"))
 
 /***/ }),
 /* 44 */
@@ -5600,47 +5639,254 @@ module.exports = function () {
 /* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var SockJS = __webpack_require__(53);
+var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_RESULT__;/*
+* loglevel - https://github.com/pimterry/loglevel
+*
+* Copyright (c) 2013 Tim Perry
+* Licensed under the MIT license.
+*/
+(function (root, definition) {
+    "use strict";
+    if (true) {
+        !(__WEBPACK_AMD_DEFINE_FACTORY__ = (definition),
+				__WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ?
+				(__WEBPACK_AMD_DEFINE_FACTORY__.call(exports, __webpack_require__, exports, module)) :
+				__WEBPACK_AMD_DEFINE_FACTORY__),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+    } else if (typeof module === 'object' && module.exports) {
+        module.exports = definition();
+    } else {
+        root.log = definition();
+    }
+}(this, function () {
+    "use strict";
 
-var retries = 0;
-var sock = null;
+    // Slightly dubious tricks to cut down minimized file size
+    var noop = function() {};
+    var undefinedType = "undefined";
 
-function socket(url, handlers) {
-	sock = new SockJS(url);
+    var logMethods = [
+        "trace",
+        "debug",
+        "info",
+        "warn",
+        "error"
+    ];
 
-	sock.onopen = function() {
-		retries = 0;
-	}
+    // Cross-browser bind equivalent that works at least back to IE6
+    function bindMethod(obj, methodName) {
+        var method = obj[methodName];
+        if (typeof method.bind === 'function') {
+            return method.bind(obj);
+        } else {
+            try {
+                return Function.prototype.bind.call(method, obj);
+            } catch (e) {
+                // Missing bind shim or IE8 + Modernizr, fallback to wrapping
+                return function() {
+                    return Function.prototype.apply.apply(method, [obj, arguments]);
+                };
+            }
+        }
+    }
 
-	sock.onclose = function() {
-		if(retries === 0)
-			handlers.close();
+    // Build the best logging method possible for this env
+    // Wherever possible we want to bind, not wrap, to preserve stack traces
+    function realMethod(methodName) {
+        if (methodName === 'debug') {
+            methodName = 'log';
+        }
 
-		// Try to reconnect.
-		sock = null;
+        if (typeof console === undefinedType) {
+            return false; // No method possible, for now - fixed later by enableLoggingWhenConsoleArrives
+        } else if (console[methodName] !== undefined) {
+            return bindMethod(console, methodName);
+        } else if (console.log !== undefined) {
+            return bindMethod(console, 'log');
+        } else {
+            return noop;
+        }
+    }
 
-		// After 10 retries stop trying, to prevent logspam.
-		if(retries <= 10) {
-			// Exponentially increase timeout to reconnect.
-			// Respectfully copied from the package `got`.
-			var retryInMs = 1000 * Math.pow(2, retries) + Math.random() * 100;
-			retries += 1;
+    // These private functions always need `this` to be set properly
 
-			setTimeout(function() {
-				socket(url, handlers);
-			}, retryInMs);
-		}
-	};
+    function replaceLoggingMethods(level, loggerName) {
+        /*jshint validthis:true */
+        for (var i = 0; i < logMethods.length; i++) {
+            var methodName = logMethods[i];
+            this[methodName] = (i < level) ?
+                noop :
+                this.methodFactory(methodName, level, loggerName);
+        }
 
-	sock.onmessage = function(e) {
-		// This assumes that all data sent via the websocket is JSON.
-		var msg = JSON.parse(e.data);
-		if(handlers[msg.type])
-			handlers[msg.type](msg.data);
-	};
-}
+        // Define log.log as an alias for log.debug
+        this.log = this.debug;
+    }
 
-module.exports = socket;
+    // In old IE versions, the console isn't present until you first open it.
+    // We build realMethod() replacements here that regenerate logging methods
+    function enableLoggingWhenConsoleArrives(methodName, level, loggerName) {
+        return function () {
+            if (typeof console !== undefinedType) {
+                replaceLoggingMethods.call(this, level, loggerName);
+                this[methodName].apply(this, arguments);
+            }
+        };
+    }
+
+    // By default, we use closely bound real methods wherever possible, and
+    // otherwise we wait for a console to appear, and then try again.
+    function defaultMethodFactory(methodName, level, loggerName) {
+        /*jshint validthis:true */
+        return realMethod(methodName) ||
+               enableLoggingWhenConsoleArrives.apply(this, arguments);
+    }
+
+    function Logger(name, defaultLevel, factory) {
+      var self = this;
+      var currentLevel;
+      var storageKey = "loglevel";
+      if (name) {
+        storageKey += ":" + name;
+      }
+
+      function persistLevelIfPossible(levelNum) {
+          var levelName = (logMethods[levelNum] || 'silent').toUpperCase();
+
+          if (typeof window === undefinedType) return;
+
+          // Use localStorage if available
+          try {
+              window.localStorage[storageKey] = levelName;
+              return;
+          } catch (ignore) {}
+
+          // Use session cookie as fallback
+          try {
+              window.document.cookie =
+                encodeURIComponent(storageKey) + "=" + levelName + ";";
+          } catch (ignore) {}
+      }
+
+      function getPersistedLevel() {
+          var storedLevel;
+
+          if (typeof window === undefinedType) return;
+
+          try {
+              storedLevel = window.localStorage[storageKey];
+          } catch (ignore) {}
+
+          // Fallback to cookies if local storage gives us nothing
+          if (typeof storedLevel === undefinedType) {
+              try {
+                  var cookie = window.document.cookie;
+                  var location = cookie.indexOf(
+                      encodeURIComponent(storageKey) + "=");
+                  if (location) {
+                      storedLevel = /^([^;]+)/.exec(cookie.slice(location))[1];
+                  }
+              } catch (ignore) {}
+          }
+
+          // If the stored level is not valid, treat it as if nothing was stored.
+          if (self.levels[storedLevel] === undefined) {
+              storedLevel = undefined;
+          }
+
+          return storedLevel;
+      }
+
+      /*
+       *
+       * Public logger API - see https://github.com/pimterry/loglevel for details
+       *
+       */
+
+      self.levels = { "TRACE": 0, "DEBUG": 1, "INFO": 2, "WARN": 3,
+          "ERROR": 4, "SILENT": 5};
+
+      self.methodFactory = factory || defaultMethodFactory;
+
+      self.getLevel = function () {
+          return currentLevel;
+      };
+
+      self.setLevel = function (level, persist) {
+          if (typeof level === "string" && self.levels[level.toUpperCase()] !== undefined) {
+              level = self.levels[level.toUpperCase()];
+          }
+          if (typeof level === "number" && level >= 0 && level <= self.levels.SILENT) {
+              currentLevel = level;
+              if (persist !== false) {  // defaults to true
+                  persistLevelIfPossible(level);
+              }
+              replaceLoggingMethods.call(self, level, name);
+              if (typeof console === undefinedType && level < self.levels.SILENT) {
+                  return "No console available for logging";
+              }
+          } else {
+              throw "log.setLevel() called with invalid level: " + level;
+          }
+      };
+
+      self.setDefaultLevel = function (level) {
+          if (!getPersistedLevel()) {
+              self.setLevel(level, false);
+          }
+      };
+
+      self.enableAll = function(persist) {
+          self.setLevel(self.levels.TRACE, persist);
+      };
+
+      self.disableAll = function(persist) {
+          self.setLevel(self.levels.SILENT, persist);
+      };
+
+      // Initialize with the right level
+      var initialLevel = getPersistedLevel();
+      if (initialLevel == null) {
+          initialLevel = defaultLevel == null ? "WARN" : defaultLevel;
+      }
+      self.setLevel(initialLevel, false);
+    }
+
+    /*
+     *
+     * Top-level API
+     *
+     */
+
+    var defaultLogger = new Logger();
+
+    var _loggersByName = {};
+    defaultLogger.getLogger = function getLogger(name) {
+        if (typeof name !== "string" || name === "") {
+          throw new TypeError("You must supply a name when creating a logger.");
+        }
+
+        var logger = _loggersByName[name];
+        if (!logger) {
+          logger = _loggersByName[name] = new Logger(
+            name, defaultLogger.getLevel(), defaultLogger.methodFactory);
+        }
+        return logger;
+    };
+
+    // Grab the current global log variable in case of overwrite
+    var _log = (typeof window !== undefinedType) ? window.log : undefined;
+    defaultLogger.noConflict = function() {
+        if (typeof window !== undefinedType &&
+               window.log === defaultLogger) {
+            window.log = _log;
+        }
+
+        return defaultLogger;
+    };
+
+    return defaultLogger;
+}));
 
 
 /***/ }),
@@ -5648,11 +5894,60 @@ module.exports = socket;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+
+const SockJS = __webpack_require__(54);
+
+let retries = 0;
+let sock = null;
+
+function socket(url, handlers) {
+  sock = new SockJS(url);
+
+  sock.onopen = function onopen() {
+    retries = 0;
+  };
+
+  sock.onclose = function onclose() {
+    if (retries === 0) { handlers.close(); }
+
+    // Try to reconnect.
+    sock = null;
+
+    // After 10 retries stop trying, to prevent logspam.
+    if (retries <= 10) {
+      // Exponentially increase timeout to reconnect.
+      // Respectfully copied from the package `got`.
+      // eslint-disable-next-line no-mixed-operators, no-restricted-properties
+      const retryInMs = 1000 * Math.pow(2, retries) + Math.random() * 100;
+      retries += 1;
+
+      setTimeout(function cb() {
+        socket(url, handlers);
+      }, retryInMs);
+    }
+  };
+
+  sock.onmessage = function onmessage(e) {
+    // This assumes that all data sent via the websocket is JSON.
+    const msg = JSON.parse(e.data);
+    if (handlers[msg.type]) { handlers[msg.type](msg.data); }
+  };
+}
+
+module.exports = socket;
+
+
+/***/ }),
+/* 54 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 
-var transportList = __webpack_require__(54);
+var transportList = __webpack_require__(55);
 
-module.exports = __webpack_require__(72)(transportList);
+module.exports = __webpack_require__(73)(transportList);
 
 // TODO can't get rid of this until all servers do
 if ('_sockjs_onload' in global) {
@@ -5662,7 +5957,7 @@ if ('_sockjs_onload' in global) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5670,8 +5965,8 @@ if ('_sockjs_onload' in global) {
 
 module.exports = [
   // streaming transports
-  __webpack_require__(55)
-, __webpack_require__(62)
+  __webpack_require__(56)
+, __webpack_require__(63)
 , __webpack_require__(29)
 , __webpack_require__(30)
 , __webpack_require__(19)(__webpack_require__(30))
@@ -5680,14 +5975,14 @@ module.exports = [
 , __webpack_require__(34)
 , __webpack_require__(19)(__webpack_require__(34))
 , __webpack_require__(35)
-, __webpack_require__(68)
-, __webpack_require__(19)(__webpack_require__(35))
 , __webpack_require__(69)
+, __webpack_require__(19)(__webpack_require__(35))
+, __webpack_require__(70)
 ];
 
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5697,7 +5992,7 @@ var utils = __webpack_require__(7)
   , urlUtils = __webpack_require__(5)
   , inherits = __webpack_require__(0)
   , EventEmitter = __webpack_require__(4).EventEmitter
-  , WebsocketDriver = __webpack_require__(61)
+  , WebsocketDriver = __webpack_require__(62)
   ;
 
 var debug = function() {};
@@ -5794,7 +6089,7 @@ module.exports = WebSocketTransport;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5819,7 +6114,7 @@ if (global.crypto && global.crypto.getRandomValues) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5864,7 +6159,7 @@ module.exports = function required(port, protocol) {
 
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5943,7 +6238,7 @@ exports.parse = querystring;
 
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 
@@ -5959,7 +6254,7 @@ exports.coerce = coerce;
 exports.disable = disable;
 exports.enable = enable;
 exports.enabled = enabled;
-exports.humanize = __webpack_require__(60);
+exports.humanize = __webpack_require__(61);
 
 /**
  * The currently active debug mode names, and names to skip.
@@ -6151,7 +6446,7 @@ function coerce(val) {
 
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports) {
 
 /**
@@ -6309,7 +6604,7 @@ function plural(ms, n, name) {
 
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6327,7 +6622,7 @@ if (Driver) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6376,7 +6671,7 @@ module.exports = XhrStreamingTransport;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6471,7 +6766,7 @@ module.exports = BufferedSender;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6536,7 +6831,7 @@ module.exports = Polling;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6607,7 +6902,7 @@ module.exports = EventSourceReceiver;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports) {
 
 /* WEBPACK VAR INJECTION */(function(__webpack_amd_options__) {/* globals __webpack_amd_options__ */
@@ -6616,7 +6911,7 @@ module.exports = __webpack_amd_options__;
 /* WEBPACK VAR INJECTION */}.call(exports, {}))
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6711,7 +7006,7 @@ module.exports = HtmlfileReceiver;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6741,7 +7036,7 @@ module.exports = XdrPollingTransport;
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6757,8 +7052,8 @@ module.exports = XdrPollingTransport;
 
 var inherits = __webpack_require__(0)
   , SenderReceiver = __webpack_require__(27)
-  , JsonpReceiver = __webpack_require__(70)
-  , jsonpSender = __webpack_require__(71)
+  , JsonpReceiver = __webpack_require__(71)
+  , jsonpSender = __webpack_require__(72)
   ;
 
 function JsonPTransport(transUrl) {
@@ -6783,7 +7078,7 @@ module.exports = JsonPTransport;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6974,7 +7269,7 @@ module.exports = JsonpReceiver;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7081,31 +7376,31 @@ module.exports = function(url, payload, callback) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 /* WEBPACK VAR INJECTION */(function(process, global) {
 
-__webpack_require__(73);
+__webpack_require__(74);
 
 var URL = __webpack_require__(25)
   , inherits = __webpack_require__(0)
   , JSON3 = __webpack_require__(6)
   , random = __webpack_require__(8)
-  , escape = __webpack_require__(74)
+  , escape = __webpack_require__(75)
   , urlUtils = __webpack_require__(5)
   , eventUtils = __webpack_require__(7)
-  , transport = __webpack_require__(75)
+  , transport = __webpack_require__(76)
   , objectUtils = __webpack_require__(20)
   , browser = __webpack_require__(11)
-  , log = __webpack_require__(76)
+  , log = __webpack_require__(77)
   , Event = __webpack_require__(21)
   , EventTarget = __webpack_require__(26)
   , loc = __webpack_require__(36)
-  , CloseEvent = __webpack_require__(77)
-  , TransportMessageEvent = __webpack_require__(78)
-  , InfoReceiver = __webpack_require__(79)
+  , CloseEvent = __webpack_require__(78)
+  , TransportMessageEvent = __webpack_require__(79)
+  , InfoReceiver = __webpack_require__(80)
   ;
 
 var debug = function() {};
@@ -7463,14 +7758,14 @@ SockJS.prototype.countRTO = function(rtt) {
 
 module.exports = function(availableTransports) {
   transports = transport(availableTransports);
-  __webpack_require__(82)(SockJS, availableTransports);
+  __webpack_require__(83)(SockJS, availableTransports);
   return SockJS;
 };
 
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7929,7 +8224,7 @@ defineProperties(StringPrototype, {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7986,7 +8281,7 @@ module.exports = {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8044,7 +8339,7 @@ module.exports = function(availableTransports) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8070,7 +8365,7 @@ module.exports = logObject;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1)))
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8094,7 +8389,7 @@ module.exports = CloseEvent;
 
 
 /***/ }),
-/* 78 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8116,7 +8411,7 @@ module.exports = TransportMessageEvent;
 
 
 /***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8128,8 +8423,8 @@ var EventEmitter = __webpack_require__(4).EventEmitter
   , XDR = __webpack_require__(18)
   , XHRCors = __webpack_require__(15)
   , XHRLocal = __webpack_require__(10)
-  , XHRFake = __webpack_require__(80)
-  , InfoIframe = __webpack_require__(81)
+  , XHRFake = __webpack_require__(81)
+  , InfoIframe = __webpack_require__(82)
   , InfoAjax = __webpack_require__(38)
   ;
 
@@ -8213,7 +8508,7 @@ module.exports = InfoReceiver;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8244,7 +8539,7 @@ module.exports = XHRFake;
 
 
 /***/ }),
-/* 81 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8321,7 +8616,7 @@ module.exports = InfoIframe;
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2), __webpack_require__(1)))
 
 /***/ }),
-/* 82 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8330,7 +8625,7 @@ module.exports = InfoIframe;
 var urlUtils = __webpack_require__(5)
   , eventUtils = __webpack_require__(7)
   , JSON3 = __webpack_require__(6)
-  , FacadeJS = __webpack_require__(83)
+  , FacadeJS = __webpack_require__(84)
   , InfoIframeReceiver = __webpack_require__(37)
   , iframeUtils = __webpack_require__(12)
   , loc = __webpack_require__(36)
@@ -8431,7 +8726,7 @@ module.exports = function(SockJS, availableTransports) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(2)))
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8465,139 +8760,142 @@ module.exports = FacadeJS;
 
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
 
 // The error overlay is inspired (and mostly copied) from Create React App (https://github.com/facebookincubator/create-react-app)
 // They, in turn, got inspired by webpack-hot-middleware (https://github.com/glenjamin/webpack-hot-middleware).
-var ansiHTML = __webpack_require__(85);
-var Entities = __webpack_require__(86).AllHtmlEntities;
-var entities = new Entities();
 
-var colors = {
-	reset: ["transparent", "transparent"],
-	black: "181818",
-	red: "E36049",
-	green: "B3CB74",
-	yellow: "FFD080",
-	blue: "7CAFC2",
-	magenta: "7FACCA",
-	cyan: "C3C2EF",
-	lightgrey: "EBE7E3",
-	darkgrey: "6D7891"
+const ansiHTML = __webpack_require__(86);
+const Entities = __webpack_require__(87).AllHtmlEntities;
+
+const entities = new Entities();
+
+const colors = {
+  reset: ['transparent', 'transparent'],
+  black: '181818',
+  red: 'E36049',
+  green: 'B3CB74',
+  yellow: 'FFD080',
+  blue: '7CAFC2',
+  magenta: '7FACCA',
+  cyan: 'C3C2EF',
+  lightgrey: 'EBE7E3',
+  darkgrey: '6D7891'
 };
 ansiHTML.setColors(colors);
 
 function createOverlayIframe(onIframeLoad) {
-	var iframe = document.createElement("iframe");
-	iframe.id = "webpack-dev-server-client-overlay";
-	iframe.src = "about:blank";
-	iframe.style.position = "fixed";
-	iframe.style.left = 0;
-	iframe.style.top = 0;
-	iframe.style.right = 0;
-	iframe.style.bottom = 0;
-	iframe.style.width = "100vw";
-	iframe.style.height = "100vh";
-	iframe.style.border = "none";
-	iframe.style.zIndex = 9999999999;
-	iframe.onload = onIframeLoad;
-	return iframe;
+  const iframe = document.createElement('iframe');
+  iframe.id = 'webpack-dev-server-client-overlay';
+  iframe.src = 'about:blank';
+  iframe.style.position = 'fixed';
+  iframe.style.left = 0;
+  iframe.style.top = 0;
+  iframe.style.right = 0;
+  iframe.style.bottom = 0;
+  iframe.style.width = '100vw';
+  iframe.style.height = '100vh';
+  iframe.style.border = 'none';
+  iframe.style.zIndex = 9999999999;
+  iframe.onload = onIframeLoad;
+  return iframe;
 }
 
 function addOverlayDivTo(iframe) {
-	var div = iframe.contentDocument.createElement("div");
-	div.id = "webpack-dev-server-client-overlay-div";
-	div.style.position = "fixed";
-	div.style.boxSizing = "border-box";
-	div.style.left = 0;
-	div.style.top = 0;
-	div.style.right = 0;
-	div.style.bottom = 0;
-	div.style.width = "100vw";
-	div.style.height = "100vh";
-	div.style.backgroundColor = "black";
-	div.style.color = "#E8E8E8";
-	div.style.fontFamily = "Menlo, Consolas, monospace";
-	div.style.fontSize = "large";
-	div.style.padding = "2rem";
-	div.style.lineHeight = "1.2";
-	div.style.whiteSpace = "pre-wrap";
-	div.style.overflow = "auto";
-	iframe.contentDocument.body.appendChild(div);
-	return div;
+  const div = iframe.contentDocument.createElement('div');
+  div.id = 'webpack-dev-server-client-overlay-div';
+  div.style.position = 'fixed';
+  div.style.boxSizing = 'border-box';
+  div.style.left = 0;
+  div.style.top = 0;
+  div.style.right = 0;
+  div.style.bottom = 0;
+  div.style.width = '100vw';
+  div.style.height = '100vh';
+  div.style.backgroundColor = 'black';
+  div.style.color = '#E8E8E8';
+  div.style.fontFamily = 'Menlo, Consolas, monospace';
+  div.style.fontSize = 'large';
+  div.style.padding = '2rem';
+  div.style.lineHeight = '1.2';
+  div.style.whiteSpace = 'pre-wrap';
+  div.style.overflow = 'auto';
+  iframe.contentDocument.body.appendChild(div);
+  return div;
 }
 
-var overlayIframe = null;
-var overlayDiv = null;
-var lastOnOverlayDivReady = null;
+let overlayIframe = null;
+let overlayDiv = null;
+let lastOnOverlayDivReady = null;
 
 function ensureOverlayDivExists(onOverlayDivReady) {
-	if(overlayDiv) {
-	// Everything is ready, call the callback right away.
-		onOverlayDivReady(overlayDiv);
-		return;
-	}
+  if (overlayDiv) {
+    // Everything is ready, call the callback right away.
+    onOverlayDivReady(overlayDiv);
+    return;
+  }
 
-	// Creating an iframe may be asynchronous so we'll schedule the callback.
-	// In case of multiple calls, last callback wins.
-	lastOnOverlayDivReady = onOverlayDivReady;
+  // Creating an iframe may be asynchronous so we'll schedule the callback.
+  // In case of multiple calls, last callback wins.
+  lastOnOverlayDivReady = onOverlayDivReady;
 
-	if(overlayIframe) {
-		// We're already creating it.
-		return;
-	}
+  if (overlayIframe) {
+    // We're already creating it.
+    return;
+  }
 
-	// Create iframe and, when it is ready, a div inside it.
-	overlayIframe = createOverlayIframe(function onIframeLoad() {
-		overlayDiv = addOverlayDivTo(overlayIframe);
-		// Now we can talk!
-		lastOnOverlayDivReady(overlayDiv);
-	});
+  // Create iframe and, when it is ready, a div inside it.
+  overlayIframe = createOverlayIframe(function cb() {
+    overlayDiv = addOverlayDivTo(overlayIframe);
+    // Now we can talk!
+    lastOnOverlayDivReady(overlayDiv);
+  });
 
-	// Zalgo alert: onIframeLoad() will be called either synchronously
-	// or asynchronously depending on the browser.
-	// We delay adding it so `overlayIframe` is set when `onIframeLoad` fires.
-	document.body.appendChild(overlayIframe);
+  // Zalgo alert: onIframeLoad() will be called either synchronously
+  // or asynchronously depending on the browser.
+  // We delay adding it so `overlayIframe` is set when `onIframeLoad` fires.
+  document.body.appendChild(overlayIframe);
 }
 
 function showMessageOverlay(message) {
-	ensureOverlayDivExists(function onOverlayDivReady(overlayDiv) {
-		// Make it look similar to our terminal.
-		overlayDiv.innerHTML =
-			"<span style=\"color: #" +
-			colors.red +
-			"\">Failed to compile.</span><br><br>" +
-			ansiHTML(entities.encode(message));
-	});
+  ensureOverlayDivExists(function cb(div) {
+    // Make it look similar to our terminal.
+    div.innerHTML = '<span style="color: #' + colors.red +
+                    '">Failed to compile.</span><br><br>' +
+                    ansiHTML(entities.encode(message));
+  });
 }
 
 function destroyErrorOverlay() {
-	if(!overlayDiv) {
-		// It is not there in the first place.
-		return;
-	}
+  if (!overlayDiv) {
+    // It is not there in the first place.
+    return;
+  }
 
-	// Clean up and reset internal state.
-	document.body.removeChild(overlayIframe);
-	overlayDiv = null;
-	overlayIframe = null;
-	lastOnOverlayDivReady = null;
+  // Clean up and reset internal state.
+  document.body.removeChild(overlayIframe);
+  overlayDiv = null;
+  overlayIframe = null;
+  lastOnOverlayDivReady = null;
 }
 
 // Successful compilation.
 exports.clear = function handleSuccess() {
-	destroyErrorOverlay();
-}
+  destroyErrorOverlay();
+};
 
 // Compilation with errors (e.g. syntax error or missing modules).
 exports.showMessage = function handleMessage(messages) {
-	showMessageOverlay(messages[0]);
-}
+  showMessageOverlay(messages[0]);
+};
 
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8780,19 +9078,19 @@ ansiHTML.reset()
 
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 module.exports = {
-  XmlEntities: __webpack_require__(87),
-  Html4Entities: __webpack_require__(88),
+  XmlEntities: __webpack_require__(88),
+  Html4Entities: __webpack_require__(89),
   Html5Entities: __webpack_require__(39),
   AllHtmlEntities: __webpack_require__(39)
 };
 
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports) {
 
 var ALPHA_INDEX = {
@@ -8953,7 +9251,7 @@ module.exports = XmlEntities;
 
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports) {
 
 var HTML_ALPHA = ['apos', 'nbsp', 'iexcl', 'cent', 'pound', 'curren', 'yen', 'brvbar', 'sect', 'uml', 'copy', 'ordf', 'laquo', 'not', 'shy', 'reg', 'macr', 'deg', 'plusmn', 'sup2', 'sup3', 'acute', 'micro', 'para', 'middot', 'cedil', 'sup1', 'ordm', 'raquo', 'frac14', 'frac12', 'frac34', 'iquest', 'Agrave', 'Aacute', 'Acirc', 'Atilde', 'Auml', 'Aring', 'Aelig', 'Ccedil', 'Egrave', 'Eacute', 'Ecirc', 'Euml', 'Igrave', 'Iacute', 'Icirc', 'Iuml', 'ETH', 'Ntilde', 'Ograve', 'Oacute', 'Ocirc', 'Otilde', 'Ouml', 'times', 'Oslash', 'Ugrave', 'Uacute', 'Ucirc', 'Uuml', 'Yacute', 'THORN', 'szlig', 'agrave', 'aacute', 'acirc', 'atilde', 'auml', 'aring', 'aelig', 'ccedil', 'egrave', 'eacute', 'ecirc', 'euml', 'igrave', 'iacute', 'icirc', 'iuml', 'eth', 'ntilde', 'ograve', 'oacute', 'ocirc', 'otilde', 'ouml', 'divide', 'oslash', 'ugrave', 'uacute', 'ucirc', 'uuml', 'yacute', 'thorn', 'yuml', 'quot', 'amp', 'lt', 'gt', 'OElig', 'oelig', 'Scaron', 'scaron', 'Yuml', 'circ', 'tilde', 'ensp', 'emsp', 'thinsp', 'zwnj', 'zwj', 'lrm', 'rlm', 'ndash', 'mdash', 'lsquo', 'rsquo', 'sbquo', 'ldquo', 'rdquo', 'bdquo', 'dagger', 'Dagger', 'permil', 'lsaquo', 'rsaquo', 'euro', 'fnof', 'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota', 'Kappa', 'Lambda', 'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau', 'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega', 'alpha', 'beta', 'gamma', 'delta', 'epsilon', 'zeta', 'eta', 'theta', 'iota', 'kappa', 'lambda', 'mu', 'nu', 'xi', 'omicron', 'pi', 'rho', 'sigmaf', 'sigma', 'tau', 'upsilon', 'phi', 'chi', 'psi', 'omega', 'thetasym', 'upsih', 'piv', 'bull', 'hellip', 'prime', 'Prime', 'oline', 'frasl', 'weierp', 'image', 'real', 'trade', 'alefsym', 'larr', 'uarr', 'rarr', 'darr', 'harr', 'crarr', 'lArr', 'uArr', 'rArr', 'dArr', 'hArr', 'forall', 'part', 'exist', 'empty', 'nabla', 'isin', 'notin', 'ni', 'prod', 'sum', 'minus', 'lowast', 'radic', 'prop', 'infin', 'ang', 'and', 'or', 'cap', 'cup', 'int', 'there4', 'sim', 'cong', 'asymp', 'ne', 'equiv', 'le', 'ge', 'sub', 'sup', 'nsub', 'sube', 'supe', 'oplus', 'otimes', 'perp', 'sdot', 'lceil', 'rceil', 'lfloor', 'rfloor', 'lang', 'rang', 'loz', 'spades', 'clubs', 'hearts', 'diams'];
@@ -9106,15 +9404,88 @@ module.exports = Html4Entities;
 
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var EventEmitter = __webpack_require__(90);
+var map = {
+	"./log": 91
+};
+function webpackContext(req) {
+	return __webpack_require__(webpackContextResolve(req));
+};
+function webpackContextResolve(req) {
+	var id = map[req];
+	if(!(id + 1)) // check for number or string
+		throw new Error("Cannot find module '" + req + "'.");
+	return id;
+};
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = 90;
+
+/***/ }),
+/* 91 */
+/***/ (function(module, exports) {
+
+var logLevel = "info";
+
+function dummy() {}
+
+function shouldLog(level) {
+	var shouldLog = (logLevel === "info" && level === "info") ||
+		(["info", "warning"].indexOf(logLevel) >= 0 && level === "warning") ||
+		(["info", "warning", "error"].indexOf(logLevel) >= 0 && level === "error");
+	return shouldLog;
+}
+
+function logGroup(logFn) {
+	return function(level, msg) {
+		if(shouldLog(level)) {
+			logFn(msg);
+		}
+	};
+}
+
+module.exports = function(level, msg) {
+	if(shouldLog(level)) {
+		if(level === "info") {
+			console.log(msg);
+		} else if(level === "warning") {
+			console.warn(msg);
+		} else if(level === "error") {
+			console.error(msg);
+		}
+	}
+};
+
+var group = console.group || dummy;
+var groupCollapsed = console.groupCollapsed || dummy;
+var groupEnd = console.groupEnd || dummy;
+
+module.exports.group = logGroup(group);
+
+module.exports.groupCollapsed = logGroup(groupCollapsed);
+
+module.exports.groupEnd = logGroup(groupEnd);
+
+module.exports.setLogLevel = function(level) {
+	logLevel = level;
+};
+
+
+/***/ }),
+/* 92 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var EventEmitter = __webpack_require__(93);
 module.exports = new EventEmitter();
 
 
 /***/ }),
-/* 90 */
+/* 93 */
 /***/ (function(module, exports) {
 
 // Copyright Joyent, Inc. and other Node contributors.
@@ -9422,7 +9793,7 @@ function isUndefined(arg) {
 
 
 /***/ }),
-/* 91 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9430,7 +9801,7 @@ function isUndefined(arg) {
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _Slider = __webpack_require__(92);
+var _Slider = __webpack_require__(95);
 
 var _Slider2 = _interopRequireDefault(_Slider);
 
@@ -9461,7 +9832,7 @@ module.exports = function (options) {
 };
 
 /***/ }),
-/* 92 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9473,7 +9844,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _InitHandler = __webpack_require__(93);
+var _InitHandler = __webpack_require__(96);
 
 var _InitHandler2 = _interopRequireDefault(_InitHandler);
 
@@ -9481,19 +9852,19 @@ var _TransitionToNextSlideHandler = __webpack_require__(40);
 
 var _TransitionToNextSlideHandler2 = _interopRequireDefault(_TransitionToNextSlideHandler);
 
-var _TransitionToPreviousSlideHandler = __webpack_require__(99);
+var _TransitionToPreviousSlideHandler = __webpack_require__(102);
 
 var _TransitionToPreviousSlideHandler2 = _interopRequireDefault(_TransitionToPreviousSlideHandler);
 
-var _TransitionToHandler = __webpack_require__(102);
+var _TransitionToHandler = __webpack_require__(105);
 
 var _TransitionToHandler2 = _interopRequireDefault(_TransitionToHandler);
 
-var _StartAutoplayHandler = __webpack_require__(103);
+var _StartAutoplayHandler = __webpack_require__(106);
 
 var _StartAutoplayHandler2 = _interopRequireDefault(_StartAutoplayHandler);
 
-var _StopAutoplayHandler = __webpack_require__(106);
+var _StopAutoplayHandler = __webpack_require__(109);
 
 var _StopAutoplayHandler2 = _interopRequireDefault(_StopAutoplayHandler);
 
@@ -9505,17 +9876,21 @@ var _GetNextSlide = __webpack_require__(41);
 
 var _GetNextSlide2 = _interopRequireDefault(_GetNextSlide);
 
-var _GetSliderPositionAsPercentage = __webpack_require__(109);
+var _GetSliderPositionAsPercentage = __webpack_require__(112);
 
 var _GetSliderPositionAsPercentage2 = _interopRequireDefault(_GetSliderPositionAsPercentage);
 
-var _Bus = __webpack_require__(110);
+var _Bus = __webpack_require__(113);
 
 var _Bus2 = _interopRequireDefault(_Bus);
 
-var _Store = __webpack_require__(111);
+var _Store = __webpack_require__(114);
 
 var _Store2 = _interopRequireDefault(_Store);
+
+var _ForEach = __webpack_require__(115);
+
+var _ForEach2 = _interopRequireDefault(_ForEach);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9552,9 +9927,6 @@ var _class = function () {
         this.listen();
 
         (0, _InitHandler2.default)(this.store, this.bus, this.dom.slides.length, this.options.slideDuration, this.options.autoplaySpeed);
-
-        this.initBulletsUI();
-        this.initButtonsUI();
     }
 
     _createClass(_class, [{
@@ -9582,7 +9954,8 @@ var _class = function () {
                 _loop(i);
             }
             this.options.el.appendChild(bullets);
-            this.dom.bullets = bullets;
+            this.dom.bulletsContainer = bullets;
+            this.dom.bullets = this.dom.bulletsContainer.querySelectorAll('.' + this.options.blockname + '__bullet');
         }
     }, {
         key: 'initButtonsUI',
@@ -9605,9 +9978,56 @@ var _class = function () {
             this.dom.next.addEventListener('click', function () {
                 _this2.next();
             });
+
             this.dom.prev.addEventListener('click', function () {
                 _this2.prev();
             });
+        }
+    }, {
+        key: 'initTouchEvent',
+        value: function initTouchEvent() {
+            var _this3 = this;
+
+            var touch = {
+                startX: undefined,
+                throttle: 100,
+                inProgress: false
+            };
+
+            var touchdirection = function touchdirection(startX, endX) {
+                return endX < startX ? 'right' : 'left';
+            };
+
+            this.dom.slider.addEventListener('touchstart', function (event) {
+                touch.startX = event.touches[0].screenX;
+            });
+
+            this.dom.slider.addEventListener('touchmove', function (event) {
+                if (touch.inProgress) {
+                    return;
+                }
+                var move = touchdirection(touch.startX, event.touches[0].screenX) === 'right' ? _this3.next : _this3.prev;
+
+                move.bind(_this3)();
+                touch.inProgress = true;
+            });
+
+            this.dom.slider.addEventListener('touchend', function (event) {
+                event.preventDefault();
+                touch.inProgress = false;
+            });
+        }
+    }, {
+        key: 'selectActiveSlide',
+        value: function selectActiveSlide() {
+            var _this4 = this;
+
+            if (this.dom.bullets !== undefined) {
+                (0, _ForEach2.default)(this.dom.bullets, function (index) {
+                    var action = index === _this4.store.get().currentSlide - 1 ? 'add' : 'remove';
+                    _this4.dom.bullets[index].classList[action]('is-active');
+                });
+            }
         }
     }, {
         key: 'listenToErrors',
@@ -9619,32 +10039,37 @@ var _class = function () {
     }, {
         key: 'listen',
         value: function listen() {
-            var _this3 = this;
+            var _this5 = this;
 
-            this.bus.on('Initiated', function (state) {
-                _this3.dom.slider.style.transitionDuration = _this3.store.get().slideDuration + 'ms';
-                _this3.options.onInit();
+            this.bus.on('Initiated', function () {
+                _this5.initBulletsUI();
+                _this5.initButtonsUI();
+                _this5.initTouchEvent();
+                _this5.selectActiveSlide();
+                _this5.dom.slider.style.transitionDuration = _this5.store.get().slideDuration + 'ms';
+                _this5.options.onInit();
             });
-            this.bus.on('TransitionToNextSlideStarted', function (state) {
-                _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
-                _this3.options.beforeSlide();
+            this.bus.on('TransitionToNextSlideStarted', function () {
+                _this5.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this5.store.get());
+                _this5.options.beforeSlide();
             });
-            this.bus.on('TransitionToPreviousSlideStarted', function (state) {
-                _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
-                _this3.options.beforeSlide();
+            this.bus.on('TransitionToPreviousSlideStarted', function () {
+                _this5.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this5.store.get());
+                _this5.options.beforeSlide();
             });
-            this.bus.on('TransitionToStarted', function (state) {
-                _this3.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this3.store.get());
-                _this3.options.beforeSlide();
+            this.bus.on('TransitionToStarted', function () {
+                _this5.dom.slider.style['margin-left'] = (0, _GetSliderPositionAsPercentage2.default)(_this5.store.get());
+                _this5.options.beforeSlide();
             });
-            this.bus.on('TransitionCompleted', function (state) {
-                _this3.options.afterSlide();
+            this.bus.on('TransitionCompleted', function () {
+                _this5.selectActiveSlide();
+                _this5.options.afterSlide();
             });
-            this.bus.on('AutoplayStopped', function (state) {
-                _this3.options.onStopAutoplay();
+            this.bus.on('AutoplayStopped', function () {
+                _this5.options.onStopAutoplay();
             });
-            this.bus.on('AutoplayStarted', function (state) {
-                _this3.options.onStartAutoplay();
+            this.bus.on('AutoplayStarted', function () {
+                _this5.options.onStartAutoplay();
             });
         }
     }, {
@@ -9680,7 +10105,7 @@ var _class = function () {
 exports.default = _class;
 
 /***/ }),
-/* 93 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9699,14 +10124,14 @@ exports.default = function (store, bus, numberOfSlides, slideDuration, autoplayS
     }
 };
 
-var _Init = __webpack_require__(94);
+var _Init = __webpack_require__(97);
 
 var _Init2 = _interopRequireDefault(_Init);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 94 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9736,14 +10161,14 @@ exports.default = function (numberOfSlides, slideDuration, autoplaySpeed) {
     };
 };
 
-var _InitiationFailedException = __webpack_require__(95);
+var _InitiationFailedException = __webpack_require__(98);
 
 var _InitiationFailedException2 = _interopRequireDefault(_InitiationFailedException);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 95 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9783,7 +10208,7 @@ var InitiationFailedException = function (_Exception) {
 exports.default = InitiationFailedException;
 
 /***/ }),
-/* 96 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9808,7 +10233,7 @@ var _TransitionTo2 = _interopRequireDefault(_TransitionTo);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 97 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9848,7 +10273,7 @@ var TransitionToFailedException = function (_Exception) {
 exports.default = TransitionToFailedException;
 
 /***/ }),
-/* 98 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9880,7 +10305,7 @@ var _Copy2 = _interopRequireDefault(_Copy);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 99 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9902,7 +10327,7 @@ exports.default = function (store, bus) {
     }
 };
 
-var _TransitionToPreviousSlide = __webpack_require__(100);
+var _TransitionToPreviousSlide = __webpack_require__(103);
 
 var _TransitionToPreviousSlide2 = _interopRequireDefault(_TransitionToPreviousSlide);
 
@@ -9913,7 +10338,7 @@ var _CompleteTransitionHandler2 = _interopRequireDefault(_CompleteTransitionHand
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 100 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9927,7 +10352,7 @@ exports.default = function (Slide) {
     return (0, _TransitionTo2.default)(Slide, (0, _GetPreviousSlide2.default)(Slide));
 };
 
-var _GetPreviousSlide = __webpack_require__(101);
+var _GetPreviousSlide = __webpack_require__(104);
 
 var _GetPreviousSlide2 = _interopRequireDefault(_GetPreviousSlide);
 
@@ -9938,7 +10363,7 @@ var _TransitionTo2 = _interopRequireDefault(_TransitionTo);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 101 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9963,7 +10388,7 @@ var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 102 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9978,7 +10403,7 @@ exports.default = function (store, bus, slideNumber) {
         store.update(new _TransitionTo2.default(store.get(), slideNumber));
         bus.emit('TransitionToStarted');
         setTimeout(function () {
-            (0, _CompleteTransitionHandler2.default)(store.get(), bus);
+            (0, _CompleteTransitionHandler2.default)(store, bus);
         }, store.get().slideDuration);
     } catch (err) {
         bus.emit(err.name, err);
@@ -9996,7 +10421,7 @@ var _CompleteTransitionHandler2 = _interopRequireDefault(_CompleteTransitionHand
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 103 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10006,7 +10431,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _StartAutoplay = __webpack_require__(104);
+var _StartAutoplay = __webpack_require__(107);
 
 var _StartAutoplay2 = _interopRequireDefault(_StartAutoplay);
 
@@ -10045,7 +10470,7 @@ var StartAutoplayHandler = function StartAutoplayHandler(store, bus) {
 exports.default = StartAutoplayHandler;
 
 /***/ }),
-/* 104 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10069,14 +10494,14 @@ var _Copy = __webpack_require__(17);
 
 var _Copy2 = _interopRequireDefault(_Copy);
 
-var _StartAutoplayFailedException = __webpack_require__(105);
+var _StartAutoplayFailedException = __webpack_require__(108);
 
 var _StartAutoplayFailedException2 = _interopRequireDefault(_StartAutoplayFailedException);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 105 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10116,7 +10541,7 @@ var StartAutoplayFailedException = function (_Exception) {
 exports.default = StartAutoplayFailedException;
 
 /***/ }),
-/* 106 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10135,14 +10560,14 @@ exports.default = function (store, bus) {
     }
 };
 
-var _StopAutoplay = __webpack_require__(107);
+var _StopAutoplay = __webpack_require__(110);
 
 var _StopAutoplay2 = _interopRequireDefault(_StopAutoplay);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 107 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10166,14 +10591,14 @@ var _Copy = __webpack_require__(17);
 
 var _Copy2 = _interopRequireDefault(_Copy);
 
-var _StopAutoplayFailedException = __webpack_require__(108);
+var _StopAutoplayFailedException = __webpack_require__(111);
 
 var _StopAutoplayFailedException2 = _interopRequireDefault(_StopAutoplayFailedException);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 108 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10213,7 +10638,7 @@ var StopAutoplayFailedException = function (_Exception) {
 exports.default = StopAutoplayFailedException;
 
 /***/ }),
-/* 109 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10235,7 +10660,7 @@ var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /***/ }),
-/* 110 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10283,7 +10708,7 @@ var _class = function () {
 exports.default = _class;
 
 /***/ }),
-/* 111 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10321,6 +10746,27 @@ var _class = function () {
 
 exports.default = _class;
 
+/***/ }),
+/* 115 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (array, callback, scope) {
+    for (var i = 0; i < array.length; i++) {
+        callback.call(scope, i, array[i]);
+    }
+};
+
+; // Stolen from Todd Motto thank you!
+// https://toddmotto.com/ditch-the-array-foreach-call-nodelist-hack/
+
 /***/ })
 /******/ ]);
 });
+//# sourceMappingURL=jgb-slider.js.map

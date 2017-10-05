@@ -11,6 +11,7 @@ import GetSliderPositionAsPercentage from './ActionHelper/GetSliderPositionAsPer
 
 import Bus from './Helpers/Bus.js';
 import Store from './Helpers/Store.js';
+import forEach from './Helpers/ForEach.js';
 
 export default class {
 
@@ -36,8 +37,8 @@ export default class {
             return;
         }
 
-        this.store = new Store();
-        this.bus = new Bus();
+        this.store = new Store;
+        this.bus = new Bus;
 
         this.listenToErrors();
         this.listen();
@@ -49,9 +50,6 @@ export default class {
             this.options.slideDuration,
             this.options.autoplaySpeed
         );
-        
-        this.initBulletsUI();
-        this.initButtonsUI();
     }
     
     initBulletsUI() {
@@ -71,7 +69,8 @@ export default class {
             bullets.appendChild(bullet);
         }
         this.options.el.appendChild(bullets);
-        this.dom.bullets = bullets;
+        this.dom.bulletsContainer = bullets;
+        this.dom.bullets = this.dom.bulletsContainer.querySelectorAll('.' + this.options.blockname + '__bullet');
     }
     
     initButtonsUI() {
@@ -91,10 +90,50 @@ export default class {
         this.dom.next.addEventListener('click', () => {
             this.next();
         });
+
         this.dom.prev.addEventListener('click', () => {
             this.prev();
         });
         
+    }
+
+    initTouchEvent() {
+        let touch = {
+            startX: undefined,
+            throttle: 100,
+            inProgress: false
+        }
+
+        let touchdirection = (startX, endX) => endX < startX ? 'right' : 'left';
+
+        this.dom.slider.addEventListener('touchstart', (event) => {
+            touch.startX = event.touches[0].screenX;
+        });
+
+        this.dom.slider.addEventListener('touchmove', (event) => {
+            if (touch.inProgress) {
+                return;
+            }
+            let move = touchdirection(touch.startX, event.touches[0].screenX) === 'right'
+                ? this.next : this.prev;
+
+            move.bind(this)();
+            touch.inProgress = true;
+        })
+
+        this.dom.slider.addEventListener('touchend', (event) => {
+            event.preventDefault();
+            touch.inProgress = false;
+        });
+    }
+
+    selectActiveSlide() {
+        if (this.dom.bullets !== undefined) {
+            forEach(this.dom.bullets, (index) => {
+                let action = index === this.store.get().currentSlide - 1 ? 'add' : 'remove';
+                this.dom.bullets[index].classList[action]('is-active');
+            });
+        }
     }
 
     listenToErrors() {
@@ -104,29 +143,34 @@ export default class {
     }
 
     listen() {
-        this.bus.on('Initiated', (state) => {
+        this.bus.on('Initiated', () => {
+            this.initBulletsUI();
+            this.initButtonsUI();
+            this.initTouchEvent();
+            this.selectActiveSlide();
             this.dom.slider.style.transitionDuration = this.store.get().slideDuration + 'ms';
             this.options.onInit();
         });
-        this.bus.on('TransitionToNextSlideStarted', (state) => {
+        this.bus.on('TransitionToNextSlideStarted', () => {
             this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());
             this.options.beforeSlide();
         });
-        this.bus.on('TransitionToPreviousSlideStarted', (state) => {
+        this.bus.on('TransitionToPreviousSlideStarted', () => {
             this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());
             this.options.beforeSlide();
         });
-        this.bus.on('TransitionToStarted', (state) => {
+        this.bus.on('TransitionToStarted', () => {
             this.dom.slider.style['margin-left'] = GetSliderPositionAsPercentage(this.store.get());
             this.options.beforeSlide();
         });
-        this.bus.on('TransitionCompleted', (state) => {
+        this.bus.on('TransitionCompleted', () => {
+            this.selectActiveSlide();
             this.options.afterSlide();
         });
-        this.bus.on('AutoplayStopped', (state) => {
+        this.bus.on('AutoplayStopped', () => {
             this.options.onStopAutoplay(); 
         });
-        this.bus.on('AutoplayStarted', (state) => {
+        this.bus.on('AutoplayStarted', () => {
             this.options.onStartAutoplay(); 
         });
     }

@@ -27,6 +27,12 @@ img {
         top: 50%;
         transform: translateY(-50%);
     }
+
+    &__bullet {
+        &.is-active {
+            background-color: red;
+        }
+    }
 }
 
 button {
