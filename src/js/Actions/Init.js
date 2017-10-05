@@ -18,6 +18,7 @@ export default function (numberOfSlides, slideDuration, autoplaySpeed) {
         slideDuration: slideDuration || 1200,
         autoplay: false,
         autoplaySpeed: autoplaySpeed || 4000,
-        loopThrough: false
+        loopThrough: false,
+        direction: undefined
     }
 }

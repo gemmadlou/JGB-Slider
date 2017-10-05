@@ -2384,6 +2384,10 @@ exports.default = function (Slide, slideToGet) {
         throw new _TransitionToFailedException2.default('Cannot transition to the same slide');
     }
 
+    if (!_CanLoopThrough2.default) {
+        throw new _TransitionToFailedException2.default('Looping through slides has been removed as a client option');
+    }
+
     slide.transitionTo = slideToGet;
     slide.currentSlide = undefined;
     slide.transitionStartedAt = Date.now();
@@ -2402,6 +2406,10 @@ var _GetCurrentSlide2 = _interopRequireDefault(_GetCurrentSlide);
 var _TransitionToFailedException = __webpack_require__(100);
 
 var _TransitionToFailedException2 = _interopRequireDefault(_TransitionToFailedException);
+
+var _CanLoopThrough = __webpack_require__(116);
+
+var _CanLoopThrough2 = _interopRequireDefault(_CanLoopThrough);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10159,7 +10167,8 @@ exports.default = function (numberOfSlides, slideDuration, autoplaySpeed) {
         slideDuration: slideDuration || 1200,
         autoplay: false,
         autoplaySpeed: autoplaySpeed || 4000,
-        loopThrough: false
+        loopThrough: false,
+        direction: undefined
     };
 };
 
@@ -10297,6 +10306,7 @@ exports.default = function (state) {
 
     slide.currentSlide = slide.transitionTo;
     slide.transitionTo = undefined;
+    slide.direction = undefined;
     return slide;
 };
 
@@ -10351,6 +10361,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 exports.default = function (Slide) {
+    var slide = (0, _Copy2.default)(Slide);
+    slide.direction = 'left';
     return (0, _TransitionTo2.default)(Slide, (0, _GetPreviousSlide2.default)(Slide));
 };
 
@@ -10361,6 +10373,10 @@ var _GetPreviousSlide2 = _interopRequireDefault(_GetPreviousSlide);
 var _TransitionTo = __webpack_require__(22);
 
 var _TransitionTo2 = _interopRequireDefault(_TransitionTo);
+
+var _Copy = __webpack_require__(17);
+
+var _Copy2 = _interopRequireDefault(_Copy);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10767,6 +10783,32 @@ exports.default = function (array, callback, scope) {
 
 ; // Stolen from Todd Motto thank you!
 // https://toddmotto.com/ditch-the-array-foreach-call-nodelist-hack/
+
+/***/ }),
+/* 116 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (state, slideToGet) {
+    if (state === undefined) {
+        throw new Error('/state is undefined/');
+    }
+    if (state.loopThrough === undefined) {
+        throw new Error('state.loopthrough is undefined');
+    }
+
+    var cannotLoopLeft = state.loopThrough === false && state.currentSlide === 1 && slideToGet === state.numberOfSlides && state.direction === 'left';
+
+    var cannotLoopRight = state.loopThrough === false && state.currentSlide === state.numberOfSlides && slideToGet === 1 && state.direction === 'right';
+
+    return !cannotLoopLeft && !cannotLoopRight;
+};
 
 /***/ })
 /******/ ]);

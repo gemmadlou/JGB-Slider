@@ -8,7 +8,8 @@
     "node": ">=6.0"
   },
   "scripts": {
-    "test": "./node_modules/.bin/nyc ./node_modules/mocha/bin/mocha --recursive --require babel-polyfill --compilers js:babel-register test",
+    "test": "./node_modules/mocha/bin/mocha --recursive --require babel-polyfill --compilers js:babel-register test",
+    "coverage": "./node_modules/.bin/nyc ./node_modules/mocha/bin/mocha --recursive --require babel-polyfill --compilers js:babel-register test",
     "build": "./node_modules/.bin/webpack --config webpack.config.js --optimize-minimize --env production",
     "watch": "./node_modules/.bin/webpack --config webpack.config.js --progress --watch --env dev",
     "server": "./node_modules/.bin/webpack-dev-server --config webpack.config.js --progress --inline --open  --env dev",

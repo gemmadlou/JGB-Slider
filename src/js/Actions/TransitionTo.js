@@ -1,6 +1,7 @@
 import copy from '../Helpers/Copy.js';
 import GetCurrentSlide from '../ActionHelper/GetCurrentSlide.js';
 import TransitionToFailedException from '../Exceptions/TransitionToFailedException.js';
+import CanLoopThrough from '../Specifications/CanLoopThrough.js';
 
 export default function(Slide, slideToGet) {
 
@@ -29,6 +30,10 @@ export default function(Slide, slideToGet) {
 
     if (slideToGet === currentslide) {
         throw new TransitionToFailedException('Cannot transition to the same slide');
+    }
+
+    if (!CanLoopThrough) {
+        throw new TransitionToFailedException('Looping through slides has been removed as a client option');
     }
 
     slide.transitionTo = slideToGet;

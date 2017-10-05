@@ -13,5 +13,6 @@ export default function(state) {
 
     slide.currentSlide = slide.transitionTo;
     slide.transitionTo = undefined;
+    slide.direction = undefined;
     return slide;
 }
