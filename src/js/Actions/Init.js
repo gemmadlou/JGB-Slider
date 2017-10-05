@@ -17,6 +17,7 @@ export default function (numberOfSlides, slideDuration, autoplaySpeed) {
         transitionTo: undefined,
         slideDuration: slideDuration || 1200,
         autoplay: false,
-        autoplaySpeed: autoplaySpeed || 4000
+        autoplaySpeed: autoplaySpeed || 4000,
+        loopThrough: false
     }
 }
