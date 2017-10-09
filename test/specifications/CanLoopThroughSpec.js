@@ -72,10 +72,22 @@ describe('CanLoopThrough Specification', function() {
                     }, 1));
                 });
             });
+            
+            describe('And current slide is undefined, but transitionTo slide is lastSlide', function() {
+                it('should not loop through', function() {
+                    assert.isFalse(CanLoopThrough({
+                        currentSlide: undefined,
+                        loopThrough: false,
+                        transitionTo: 5,
+                        direction: 'left',
+                        numberOfSlides: 5
+                    }, 5));
+                });
+            });
         });
         describe('When slider direction is right', function() {
-            describe('And current slide is the last slide', function() {
-                it('cannot loop through', function() {
+            describe('and current slide is the last slide,', function() {
+                it('should not loop through', function() {
                     assert.isFalse(CanLoopThrough({
                         currentSlide: 5,
                         loopThrough: false,

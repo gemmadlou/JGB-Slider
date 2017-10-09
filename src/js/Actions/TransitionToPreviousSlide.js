@@ -5,5 +5,5 @@ import copy from '../Helpers/Copy.js';
 export default function(Slide) {
     let slide = copy(Slide);
         slide.direction = 'left';
-    return TransitionTo(Slide, GetPreviousSlide(Slide));
+    return TransitionTo(slide, GetPreviousSlide(Slide));
 }

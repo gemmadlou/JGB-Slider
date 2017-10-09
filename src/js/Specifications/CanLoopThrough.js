@@ -6,8 +6,13 @@ export default function(state, slideToGet) {
         throw new Error('state.loopthrough is undefined');
     }
 
-    let cannotLoopLeft = state.loopThrough === false
+    let whenAtCurrentSlideIsOne = state.loopThrough === false
         && state.currentSlide === 1
+        && slideToGet === state.numberOfSlides
+        && state.direction === 'left';
+
+    let whenCurrentSlideIsUndefined = state.loopThrough === false
+        && state.currentSlide === undefined
         && slideToGet === state.numberOfSlides
         && state.direction === 'left';
 
@@ -16,5 +21,5 @@ export default function(state, slideToGet) {
         && slideToGet === 1
         && state.direction === 'right';
         
-    return !cannotLoopLeft && !cannotLoopRight;
+    return !whenAtCurrentSlideIsOne && !cannotLoopRight && !whenCurrentSlideIsUndefined;
 }

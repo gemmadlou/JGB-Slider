@@ -32,7 +32,7 @@ export default function(Slide, slideToGet) {
         throw new TransitionToFailedException('Cannot transition to the same slide');
     }
 
-    if (!CanLoopThrough) {
+    if (!CanLoopThrough(slide, slideToGet)) {
         throw new TransitionToFailedException('Looping through slides has been removed as a client option');
     }
 
