@@ -1,7 +1,7 @@
 import InitiationFailedException from '../Exceptions/InitiationFailedException.js';
 
 //@todo test autoplaySpeed
-export default function (numberOfSlides, slideDuration, autoplaySpeed) {
+export default function (numberOfSlides, slideDuration, autoplaySpeed, loopThrough) {
 
     if (numberOfSlides === undefined) {
         throw new InitiationFailedException('numberOfSlides is required');
@@ -17,6 +17,8 @@ export default function (numberOfSlides, slideDuration, autoplaySpeed) {
         transitionTo: undefined,
         slideDuration: slideDuration || 1200,
         autoplay: false,
-        autoplaySpeed: autoplaySpeed || 4000
+        autoplaySpeed: autoplaySpeed || 4000,
+        loopThrough: loopThrough || false,
+        direction: undefined
     }
 }

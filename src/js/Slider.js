@@ -43,12 +43,15 @@ export default class {
         this.listenToErrors();
         this.listen();
 
+        console.log(this.options);
+
         InitHandler(
             this.store, 
             this.bus, 
             this.dom.slides.length, 
             this.options.slideDuration,
-            this.options.autoplaySpeed
+            this.options.autoplaySpeed,
+            this.options.loopThrough
         );
     }
     
@@ -149,6 +152,7 @@ export default class {
             this.initTouchEvent();
             this.selectActiveSlide();
             this.dom.slider.style.transitionDuration = this.store.get().slideDuration + 'ms';
+            this.dom.slider.style.width = (this.store.get().numberOfSlides * 100) + '%';
             this.options.onInit();
         });
         this.bus.on('TransitionToNextSlideStarted', () => {
