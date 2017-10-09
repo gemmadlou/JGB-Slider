@@ -9934,7 +9934,9 @@ var _class = function () {
         this.listenToErrors();
         this.listen();
 
-        (0, _InitHandler2.default)(this.store, this.bus, this.dom.slides.length, this.options.slideDuration, this.options.autoplaySpeed);
+        console.log(this.options);
+
+        (0, _InitHandler2.default)(this.store, this.bus, this.dom.slides.length, this.options.slideDuration, this.options.autoplaySpeed, this.options.loopThrough);
     }
 
     _createClass(_class, [{
@@ -10124,9 +10126,9 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-exports.default = function (store, bus, numberOfSlides, slideDuration, autoplaySpeed) {
+exports.default = function (store, bus, numberOfSlides, slideDuration, autoplaySpeed, loopThrough) {
     try {
-        store.update(new _Init2.default(numberOfSlides, slideDuration, autoplaySpeed));
+        store.update(new _Init2.default(numberOfSlides, slideDuration, autoplaySpeed, loopThrough));
         bus.emit('Initiated');
     } catch (err) {
         bus.emit(err.name, err);
@@ -10232,7 +10234,7 @@ Object.defineProperty(exports, "__esModule", {
 exports.default = function (Slide) {
     var slide = (0, _Copy2.default)(Slide);
     slide.direction = 'right';
-    return (0, _TransitionTo2.default)(Slide, (0, _GetNextSlide2.default)(Slide));
+    return (0, _TransitionTo2.default)(slide, (0, _GetNextSlide2.default)(slide));
 };
 
 var _GetNextSlide = __webpack_require__(41);
@@ -10809,13 +10811,15 @@ exports.default = function (state, slideToGet) {
         throw new Error('state.loopthrough is undefined');
     }
 
-    var whenAtCurrentSlideIsOne = state.loopThrough === false && state.currentSlide === 1 && slideToGet === state.numberOfSlides && state.direction === 'left';
+    var cannotLoopLeft = state.loopThrough === false && state.currentSlide === 1 && slideToGet === state.numberOfSlides && state.direction === 'left';
 
-    var whenCurrentSlideIsUndefined = state.loopThrough === false && state.currentSlide === undefined && slideToGet === state.numberOfSlides && state.direction === 'left';
+    var whenCurrentSlideIsUndefinedAndDirectionIsLeft = state.loopThrough === false && state.currentSlide === undefined && slideToGet === state.numberOfSlides && state.direction === 'left';
+
+    var whenCurrentSlideIsUndefinedAndDirectionIsRight = state.loopThrough === false && state.currentSlide === undefined && slideToGet === 1 && state.direction === 'right';
 
     var cannotLoopRight = state.loopThrough === false && state.currentSlide === state.numberOfSlides && slideToGet === 1 && state.direction === 'right';
 
-    return !whenAtCurrentSlideIsOne && !cannotLoopRight && !whenCurrentSlideIsUndefined;
+    return !cannotLoopLeft && !cannotLoopRight && !whenCurrentSlideIsUndefinedAndDirectionIsLeft && !whenCurrentSlideIsUndefinedAndDirectionIsRight;
 };
 
 /***/ })

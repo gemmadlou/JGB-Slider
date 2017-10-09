@@ -42,7 +42,7 @@ describe('CanLoopThrough Specification', function() {
                     }, 5));
                 });
             });
-            describe('And current slide is 2 of x', function() {
+            describe('And current slide is not first or last', function() {
                 it('should loop through', function() {
                     assert.isTrue(CanLoopThrough({
                         currentSlide: 2,
@@ -52,16 +52,7 @@ describe('CanLoopThrough Specification', function() {
                     }, 1));
                 });
             });
-            describe('And current slide is 3 of x', function() {
-                it('should loop through', function() {
-                    assert.isTrue(CanLoopThrough({
-                        currentSlide: 3,
-                        loopThrough: false,
-                        direction: 'left',
-                        numberOfSlides: 5
-                    }, 1));
-                });
-            });
+
             describe('And current slide is the last slide', function() {
                 it('should loop through', function() {
                     assert.isTrue(CanLoopThrough({
@@ -69,7 +60,7 @@ describe('CanLoopThrough Specification', function() {
                         loopThrough: false,
                         direction: 'left',
                         numberOfSlides: 5
-                    }, 1));
+                    }, 4));
                 });
             });
             
@@ -94,6 +85,40 @@ describe('CanLoopThrough Specification', function() {
                         direction: 'right',
                         numberOfSlides: 5
                     }, 1));
+                });
+            });
+
+            describe('And current slide is undefined, but transitionTo slide is firstSlide', function() {
+                it('should not loop through', function() {
+                    assert.isFalse(CanLoopThrough({
+                        currentSlide: undefined,
+                        loopThrough: false,
+                        transitionTo: 1,
+                        direction: 'right',
+                        numberOfSlides: 5
+                    }, 1));
+                });
+            });
+
+            describe('And current slide is first slide', function() {
+                it('should loop through', function() {
+                    assert.isTrue(CanLoopThrough({
+                        currentSlide: 1,
+                        loopThrough: false,
+                        direction: 'right',
+                        numberOfSlides: 5
+                    }, 1));
+                });
+            });
+
+            describe('And current slide is not first or last slide', function() {
+                it('should loop through', function() {
+                    assert.isTrue(CanLoopThrough({
+                        currentSlide: 3,
+                        loopThrough: false,
+                        direction: 'right',
+                        numberOfSlides: 5
+                    }, 4));
                 });
             });
         });

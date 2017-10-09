@@ -43,12 +43,15 @@ export default class {
         this.listenToErrors();
         this.listen();
 
+        console.log(this.options);
+
         InitHandler(
             this.store, 
             this.bus, 
             this.dom.slides.length, 
             this.options.slideDuration,
-            this.options.autoplaySpeed
+            this.options.autoplaySpeed,
+            this.options.loopThrough
         );
     }
     
