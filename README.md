@@ -76,6 +76,7 @@ jgbslider({
     selector: '.example-slider',
     slideDuration: 1000, // default set
     autoplay: true, // default is false
+    loopThrough: true, // default is false
     onInit: function() {
         alert('Slider initialized')
     }
